@@ -1,9 +1,11 @@
 package com.happynanum.happymall.domain.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,45 +18,53 @@ public class Account {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotBlank
+    private String identifier;
+
+    @NotBlank
     private String name;
 
-    @NotNull
+    @NotBlank
     private String password;
 
-    @NotNull
+    @NotBlank
+    private LocalDate birth;
+
+    @NotBlank
     private Integer age;
 
-    @NotNull
+    @NotBlank
     private Integer phoneNumber;
 
-    @NotNull
+    @NotBlank
     private Integer height;
 
-    @NotNull
+    @NotBlank
     private Integer weight;
 
-    @NotNull
+    @NotBlank
     private Integer shoulderLength;
 
-    @NotNull
+    @NotBlank
     private Integer armLength;
 
-    @NotNull
+    @NotBlank
     private Integer wishLength;
 
-    @NotNull
+    @NotBlank
     private Integer legLength;
 
-    @NotNull
+    @NotBlank
     private String role;
 
     @Builder.Default
-    @NotNull
+    @NotBlank
+    @Column(columnDefinition = "timestamp")
     private LocalDateTime createdDate = LocalDateTime.now();
 
     @Builder.Default
-    @NotNull
+    @NotBlank
+    @Column(columnDefinition = "timestamp")
     private LocalDateTime modifiedDate = LocalDateTime.now();
 
 }
