@@ -27,43 +27,43 @@ public class Account {
     @NotBlank
     private String password;
 
-    @NotBlank
+    @NotNull
     private LocalDate birth;
 
-    @NotBlank
+    @NotNull
     private Integer age;
 
-    @NotBlank
-    private Integer phoneNumber;
+    @NotNull
+    private String phoneNumber;
 
-    @NotBlank
+    @NotNull
     private Integer height;
 
-    @NotBlank
+    @NotNull
     private Integer weight;
 
-    @NotBlank
+    @NotNull
     private Integer shoulderLength;
 
-    @NotBlank
+    @NotNull
     private Integer armLength;
 
-    @NotBlank
+    @NotNull
     private Integer wishLength;
 
-    @NotBlank
+    @NotNull
     private Integer legLength;
 
     @NotBlank
     private String role;
 
     @Builder.Default
-    @NotBlank
+    @NotNull
     @Column(columnDefinition = "timestamp")
     private LocalDateTime createdDate = LocalDateTime.now();
 
     @Builder.Default
-    @NotBlank
+    @NotNull
     @Column(columnDefinition = "timestamp")
     private LocalDateTime modifiedDate = LocalDateTime.now();
 

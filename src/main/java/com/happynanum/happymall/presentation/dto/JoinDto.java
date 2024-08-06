@@ -27,29 +27,29 @@ public class JoinDto {
     @Size(min = 5, max = 10, message = "비밀번호는 5~10자로 작성해주세요.")
     private String password;
 
-    @NotBlank(message = "생일을 입력해주세요.")
+    @NotNull(message = "생일을 입력해주세요.")
     private LocalDate birth;
 
-    @NotBlank(message = "휴대폰 번호를 입력해주세요.")
-    @Pattern(regexp = "^01([0|1|6|7|8|9]?)-?([0-9]{3,4})-?([0-9]{4})$")
-    private Integer phoneNumber;
+    @NotNull(message = "휴대폰 번호를 입력해주세요.")
+    @Pattern(regexp = "01([0|1|6|7|8|9]?)-?([0-9]{3,4})-?([0-9]{4})")
+    private String phoneNumber;
 
-    @NotBlank
+    @NotNull
     private Integer height;
 
-    @NotBlank
+    @NotNull
     private Integer weight;
 
-    @NotBlank
+    @NotNull
     private Integer shoulderLength;
 
-    @NotBlank
+    @NotNull
     private Integer armLength;
 
-    @NotBlank
+    @NotNull
     private Integer wishLength;
 
-    @NotBlank
+    @NotNull
     private Integer legLength;
 
     @NotBlank
