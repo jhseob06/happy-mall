@@ -28,7 +28,7 @@ public class JoinDto {
     @Size(min = 5, max = 10, message = "비밀번호는 5~10자로 작성해주세요.")
     private String password;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING ,pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     @NotNull(message = "생일을 입력해주세요.")
     private LocalDate birth;
 
