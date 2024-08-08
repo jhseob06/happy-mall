@@ -12,13 +12,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDate;
 
 @SpringBootTest
-class JoinServiceTest {
+class AccountServiceTest {
 
     @Autowired
     private AccountRepository accountRepository;
 
     @Autowired
-    private JoinService joinService;
+    private AccountService joinService;
 
     @AfterEach
     void afterEach() {
@@ -40,7 +40,6 @@ class JoinServiceTest {
                 .armLength(90)
                 .wishLength(60)
                 .legLength(120)
-                .role("ROLE_MEMBER")
                 .build();
 
         joinService.joinProcess(joinDto);
@@ -50,7 +49,7 @@ class JoinServiceTest {
     }
 
     @Test
-    @DisplayName("아이디 중복 테스트")
+    @DisplayName("회원가입 아이디 중복 테스트")
     void duplicateIdentifier() {
         JoinDto joinDto1 = JoinDto.builder()
                 .identifier("member")
@@ -64,7 +63,6 @@ class JoinServiceTest {
                 .armLength(90)
                 .wishLength(60)
                 .legLength(120)
-                .role("ROLE_MEMBER")
                 .build();
 
         JoinDto joinDto2 = JoinDto.builder()
@@ -79,7 +77,6 @@ class JoinServiceTest {
                 .armLength(90)
                 .wishLength(60)
                 .legLength(120)
-                .role("ROLE_MEMBER")
                 .build();
 
         joinService.joinProcess(joinDto1);
