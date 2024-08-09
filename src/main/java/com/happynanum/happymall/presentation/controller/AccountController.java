@@ -1,7 +1,7 @@
 package com.happynanum.happymall.presentation.controller;
 
 import com.happynanum.happymall.application.service.AccountService;
-import com.happynanum.happymall.presentation.dto.JoinDto;
+import com.happynanum.happymall.domain.dto.JoinDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

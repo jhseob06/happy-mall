@@ -2,7 +2,7 @@ package com.happynanum.happymall.application.service;
 
 import com.happynanum.happymall.domain.entity.Account;
 import com.happynanum.happymall.domain.repository.AccountRepository;
-import com.happynanum.happymall.presentation.dto.JoinDto;
+import com.happynanum.happymall.domain.dto.JoinDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

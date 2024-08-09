@@ -1,7 +1,7 @@
 package com.happynanum.happymall.application.service;
 import com.happynanum.happymall.domain.entity.Account;
 import com.happynanum.happymall.domain.repository.AccountRepository;
-import com.happynanum.happymall.presentation.dto.JoinDto;
+import com.happynanum.happymall.domain.dto.JoinDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
