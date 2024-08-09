@@ -50,10 +50,6 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http
-                .formLogin((login) -> login
-                        .usernameParameter("identifier"));
-
         return http.build();
     }
 }
