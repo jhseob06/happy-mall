@@ -18,11 +18,7 @@ public class AccountController {
 
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody @Valid JoinDto joinDto) {
-        String identifier = accountService.joinProcess(joinDto);
-
-        if (!identifier.equals(joinDto.getIdentifier())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        accountService.joinProcess(joinDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

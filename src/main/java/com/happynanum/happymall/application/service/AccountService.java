@@ -18,14 +18,10 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public String joinProcess(JoinDto joinDto) {
+    public void joinProcess(JoinDto joinDto) {
 
         String identifier = joinDto.getIdentifier();
-
-        if (accountRepository.existsByIdentifier(identifier)) {
-            log.warn("이미 존재하는 아이디입니다 = {}", identifier);
-            return "";
-        }
+        duplicateAccountCheck(identifier);
 
         int age=0;
 
@@ -53,7 +49,12 @@ public class AccountService {
 
         accountRepository.save(account);
         log.info("사용자 회원가입 완료 = {}",identifier);
-        return identifier;
+    }
+
+    public void duplicateAccountCheck(String identifier){
+        if (accountRepository.existsByIdentifier(identifier)) {
+            throw new IllegalArgumentException("이미 존재하는 아이디입니다 = " + identifier);
+        }
     }
 
 }
