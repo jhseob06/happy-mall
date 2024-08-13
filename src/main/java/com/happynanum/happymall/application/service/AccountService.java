@@ -1,14 +1,17 @@
 package com.happynanum.happymall.application.service;
 
+import com.happynanum.happymall.domain.dto.AccountRequestDto;
 import com.happynanum.happymall.domain.entity.Account;
 import com.happynanum.happymall.domain.repository.AccountRepository;
 import com.happynanum.happymall.domain.dto.JoinDto;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +21,7 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Transactional
     public void joinProcess(JoinDto joinDto) {
 
         String identifier = joinDto.getIdentifier();
@@ -42,13 +46,45 @@ public class AccountService {
                 .weight(joinDto.getWeight())
                 .shoulderLength(joinDto.getShoulderLength())
                 .armLength(joinDto.getArmLength())
-                .wishLength(joinDto.getWishLength())
+                .waistLength(joinDto.getWaistLength())
                 .legLength(joinDto.getLegLength())
                 .role("ROLE_MEMBER")
                 .build();
 
         accountRepository.save(account);
         log.info("사용자 회원가입 완료 = {}",identifier);
+    }
+
+    @Transactional
+    public void modifyAccount(Long id, AccountRequestDto accountRequestDto) {
+        String identifier = accountRequestDto.getIdentifier();
+        duplicateAccountCheck(identifier);
+
+        Account account = accountRepository.findById(id).get();
+        String accountIdentifier = account.getIdentifier();
+
+        Account updateAccount = Account.builder()
+                .id(id)
+                .identifier(identifier)
+                .name(accountRequestDto.getName())
+                .password(bCryptPasswordEncoder.encode(accountRequestDto.getPassword()))
+                .birth(accountRequestDto.getBirth())
+                .age(accountRequestDto.getAge())
+                .phoneNumber(accountRequestDto.getPhoneNumber())
+                .height(accountRequestDto.getHeight())
+                .weight(accountRequestDto.getWeight())
+                .shoulderLength(accountRequestDto.getShoulderLength())
+                .armLength(accountRequestDto.getArmLength())
+                .waistLength(accountRequestDto.getWaistLength())
+                .legLength(accountRequestDto.getLegLength())
+                .createdDate(account.getCreatedDate())
+                .modifiedDate(LocalDateTime.now())
+                .role(account.getRole())
+                .build();
+
+        accountRepository.save(updateAccount);
+
+        log.info("사용자 정보수정 완료 = (기존아이디){} (변경후아이디){}", accountIdentifier, identifier);
     }
 
     public void duplicateAccountCheck(String identifier){

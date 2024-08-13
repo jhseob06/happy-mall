@@ -53,7 +53,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 .weight(0)
                 .birth(LocalDate.now())
                 .shoulderLength(0)
-                .wishLength(0)
+                .waistLength(0)
                 .armLength(0)
                 .height(0)
                 .legLength(0)

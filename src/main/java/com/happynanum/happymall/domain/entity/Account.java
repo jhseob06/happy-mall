@@ -49,7 +49,7 @@ public class Account {
     private Integer armLength;
 
     @NotNull
-    private Integer wishLength;
+    private Integer waistLength;
 
     @NotNull
     private Integer legLength;
