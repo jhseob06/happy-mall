@@ -27,7 +27,7 @@ public class AccountService {
         String identifier = joinDto.getIdentifier();
         duplicateAccountCheck(identifier);
 
-        int age=0;
+        int age;
 
         if(joinDto.getBirth().isBefore(LocalDate.now()))
             age = LocalDate.now().getYear() - joinDto.getBirth().getYear()-1;
@@ -58,7 +58,8 @@ public class AccountService {
     @Transactional
     public void modifyAccount(Long id, AccountRequestDto accountRequestDto) {
         String identifier = accountRequestDto.getIdentifier();
-        Account account = accountRepository.findById(id).get();
+        Account account = accountRepository.findById(id).orElseThrow(()->
+                new IllegalArgumentException("존재하지 않는 회원 식별자입니다 = " + id));
         String accountIdentifier = account.getIdentifier();
 
         if (!accountIdentifier.equals(identifier)) {
