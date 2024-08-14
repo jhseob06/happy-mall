@@ -1,6 +1,7 @@
 package com.happynanum.happymall.application.service;
 
 import com.happynanum.happymall.domain.dto.AccountRequestDto;
+import com.happynanum.happymall.domain.dto.AccountResponseDto;
 import com.happynanum.happymall.domain.entity.Account;
 import com.happynanum.happymall.domain.repository.AccountRepository;
 import com.happynanum.happymall.domain.dto.JoinDto;
@@ -88,6 +89,25 @@ public class AccountService {
         accountRepository.save(updateAccount);
 
         log.info("사용자 정보수정 완료 = (기존아이디){} (변경후아이디){}", accountIdentifier, identifier);
+    }
+
+    public AccountResponseDto getAccount(Long id) {
+        Account account = accountRepository.findById(id).orElseThrow(()->
+                new IllegalArgumentException("존재하지 않는 회원 식별자입니다 = " + id));
+
+        return AccountResponseDto.builder()
+                .identifier(account.getIdentifier())
+                .name(account.getName())
+                .birth(account.getBirth())
+                .age(account.getAge())
+                .phoneNumber(account.getPhoneNumber())
+                .height(account.getHeight())
+                .weight(account.getWeight())
+                .shoulderLength(account.getShoulderLength())
+                .armLength(account.getArmLength())
+                .waistLength(account.getWaistLength())
+                .legLength(account.getLegLength())
+                .build();
     }
 
     public void duplicateAccountCheck(String identifier){

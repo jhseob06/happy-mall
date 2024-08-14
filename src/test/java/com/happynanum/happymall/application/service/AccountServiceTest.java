@@ -1,9 +1,9 @@
 package com.happynanum.happymall.application.service;
 import com.happynanum.happymall.domain.dto.AccountRequestDto;
+import com.happynanum.happymall.domain.dto.AccountResponseDto;
 import com.happynanum.happymall.domain.entity.Account;
 import com.happynanum.happymall.domain.repository.AccountRepository;
 import com.happynanum.happymall.domain.dto.JoinDto;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -180,5 +180,31 @@ class AccountServiceTest {
 
         assertThrows(IllegalArgumentException.class, () ->
                 accountService.modifyAccount(id, accountRequestDto));
+    }
+
+    @Test
+    @DisplayName("회원 정보 조회")
+    public void getAccount() {
+        JoinDto joinDto = JoinDto.builder()
+                .identifier("member")
+                .name("member")
+                .password("qwer1234")
+                .birth(LocalDate.of(2006, 12, 26))
+                .phoneNumber("01012341234")
+                .height(180)
+                .weight(70)
+                .shoulderLength(80)
+                .armLength(90)
+                .waistLength(60)
+                .legLength(120)
+                .build();
+
+        accountService.joinProcess(joinDto);
+        Long id = accountRepository.findByIdentifier(joinDto.getIdentifier()).getId();
+        AccountResponseDto account = accountService.getAccount(id);
+
+        assertThat(account.getIdentifier()).isEqualTo(joinDto.getIdentifier());
+        assertThat(account.getName()).isEqualTo(joinDto.getName());
+
     }
 }

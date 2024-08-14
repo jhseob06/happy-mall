@@ -2,6 +2,7 @@ package com.happynanum.happymall.presentation.controller;
 
 import com.happynanum.happymall.application.service.AccountService;
 import com.happynanum.happymall.domain.dto.AccountRequestDto;
+import com.happynanum.happymall.domain.dto.AccountResponseDto;
 import com.happynanum.happymall.domain.dto.CustomUserDetails;
 import com.happynanum.happymall.domain.dto.JoinDto;
 import jakarta.validation.Valid;
@@ -20,7 +21,7 @@ public class AccountController {
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody @Valid JoinDto joinDto) {
         accountService.joinProcess(joinDto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping("/members/{id}")
@@ -31,15 +32,23 @@ public class AccountController {
                 .getAuthentication().getPrincipal();
 
         if (!customUserDetails.getId().equals(id)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
         accountService.modifyAccount(id, accountRequestDto);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/main")
-    public String main() {
-        return "hello";
+    @GetMapping("/members/{id}")
+    public ResponseEntity<?> get(@PathVariable Long id) {
+        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+
+        if (!customUserDetails.getId().equals(id)) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        AccountResponseDto account = accountService.getAccount(id);
+        return ResponseEntity.status(HttpStatus.OK).body(account);
     }
 }
