@@ -58,10 +58,12 @@ public class AccountService {
     @Transactional
     public void modifyAccount(Long id, AccountRequestDto accountRequestDto) {
         String identifier = accountRequestDto.getIdentifier();
-        duplicateAccountCheck(identifier);
-
         Account account = accountRepository.findById(id).get();
         String accountIdentifier = account.getIdentifier();
+
+        if (!accountIdentifier.equals(identifier)) {
+            duplicateAccountCheck(identifier);
+        }
 
         Account updateAccount = Account.builder()
                 .id(id)

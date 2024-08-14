@@ -54,7 +54,7 @@ class AccountServiceTest {
 
     @Test
     @DisplayName("회원가입 아이디 중복 테스트")
-    void duplicateIdentifier() {
+    void joinDuplicateIdentifier() {
         JoinDto joinDto1 = JoinDto.builder()
                 .identifier("member")
                 .name("member1")
@@ -68,7 +68,6 @@ class AccountServiceTest {
                 .waistLength(60)
                 .legLength(120)
                 .build();
-
         JoinDto joinDto2 = JoinDto.builder()
                 .identifier("member")
                 .name("member2")
@@ -87,8 +86,6 @@ class AccountServiceTest {
 
         assertThrows(IllegalArgumentException.class, () ->
                 accountService.joinProcess(joinDto2));
-
-
     }
 
     @Test
@@ -131,5 +128,57 @@ class AccountServiceTest {
         assertThat(account.getIdentifier()).isEqualTo("modifyMember");
         assertThat(account.getName()).isEqualTo("modifyMember");
         assertThat(accountRepository.count()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("사용자 정보수정 아이디 중복 테스트")
+    public void modifyDuplicateIdentifier() {
+        JoinDto joinDto1 = JoinDto.builder()
+                .identifier("member1")
+                .name("member1")
+                .password("qwer1234")
+                .birth(LocalDate.of(2006, 12, 26))
+                .phoneNumber("01012341234")
+                .height(180)
+                .weight(70)
+                .shoulderLength(80)
+                .armLength(90)
+                .waistLength(60)
+                .legLength(120)
+                .build();
+        JoinDto joinDto2 = JoinDto.builder()
+                .identifier("member2")
+                .name("member2")
+                .password("qwer1234")
+                .birth(LocalDate.of(2006, 12, 26))
+                .phoneNumber("01012341234")
+                .height(180)
+                .weight(70)
+                .shoulderLength(80)
+                .armLength(90)
+                .waistLength(60)
+                .legLength(120)
+                .build();
+        AccountRequestDto accountRequestDto = AccountRequestDto.builder()
+                .identifier("member2")
+                .name("modifyMember")
+                .password("qwer1234")
+                .birth(LocalDate.of(2006, 12, 26))
+                .phoneNumber("01012341234")
+                .age(19)
+                .height(180)
+                .weight(70)
+                .shoulderLength(80)
+                .armLength(90)
+                .waistLength(60)
+                .legLength(120)
+                .build();
+
+        accountService.joinProcess(joinDto1);
+        accountService.joinProcess(joinDto2);
+        Long id = accountRepository.findByIdentifier(joinDto1.getIdentifier()).getId();
+
+        assertThrows(IllegalArgumentException.class, () ->
+                accountService.modifyAccount(id, accountRequestDto));
     }
 }
