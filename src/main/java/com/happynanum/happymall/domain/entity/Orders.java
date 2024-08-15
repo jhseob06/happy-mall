@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-public class Order {
+public class Orders {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
