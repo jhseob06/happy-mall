@@ -1,7 +1,7 @@
 package com.happynanum.happymall.application.service;
 
-import com.happynanum.happymall.domain.dto.AccountRequestDto;
-import com.happynanum.happymall.domain.dto.AccountResponseDto;
+import com.happynanum.happymall.domain.dto.account.AccountRequestDto;
+import com.happynanum.happymall.domain.dto.account.AccountResponseDto;
 import com.happynanum.happymall.domain.entity.Account;
 import com.happynanum.happymall.domain.repository.AccountRepository;
 import com.happynanum.happymall.domain.dto.JoinDto;
