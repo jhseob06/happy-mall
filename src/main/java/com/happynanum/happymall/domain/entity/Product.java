@@ -45,6 +45,12 @@ public class Product {
     @NotNull
     private Integer quantity;
 
+    @NotNull
+    private Integer reviewCount;
+
+    @NotNull
+    private Integer saleCount;
+
     @Builder.Default
     @NotNull
     @Column(columnDefinition = "timestamp")

@@ -12,28 +12,20 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-public class Brand {
+public class Review {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "account_id")
-    private Account account;
+    private Product product;
 
-    @NotBlank
-    private String name;
+    @ManyToOne
+    private Account account;
 
     @NotBlank
     @Lob
     private String description;
-
-    @NotNull
-    private Integer productCount;
-
-    @NotBlank
-    private String phoneNumber;
 
     @Builder.Default
     @NotNull
