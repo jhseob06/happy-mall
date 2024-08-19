@@ -5,6 +5,7 @@ import com.happynanum.happymall.domain.dto.account.AccountRequestDto;
 import com.happynanum.happymall.domain.dto.account.AccountResponseDto;
 import com.happynanum.happymall.domain.dto.CustomUserDetails;
 import com.happynanum.happymall.domain.dto.JoinDto;
+import com.happynanum.happymall.domain.dto.account.AccountPatchRequestDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,19 @@ public class AccountController {
         Long id = customUserDetails.getId();
 
         accountService.modifyAccount(id, accountRequestDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PatchMapping("/member") //현재는 비밀번호 변경만 지원
+    public ResponseEntity<?> patch(
+            @RequestBody @Valid AccountPatchRequestDto accountPatchRequestDto,
+            @RequestParam String query
+    ) {
+        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        Long id = customUserDetails.getId();
+
+        if(query.equals("password")) accountService.modifyPassword(id, accountPatchRequestDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

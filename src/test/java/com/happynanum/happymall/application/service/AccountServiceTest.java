@@ -1,4 +1,5 @@
 package com.happynanum.happymall.application.service;
+import com.happynanum.happymall.domain.dto.account.AccountPatchRequestDto;
 import com.happynanum.happymall.domain.dto.account.AccountRequestDto;
 import com.happynanum.happymall.domain.dto.account.AccountResponseDto;
 import com.happynanum.happymall.domain.entity.Account;
@@ -54,7 +55,7 @@ class AccountServiceTest {
 
     @Test
     @DisplayName("회원가입 아이디 중복 테스트")
-    void joinDuplicateIdentifier() {
+    void joinDuplicateIdentifierTest() {
         JoinDto joinDto1 = JoinDto.builder()
                 .identifier("member")
                 .name("member1")
@@ -90,7 +91,7 @@ class AccountServiceTest {
 
     @Test
     @DisplayName("사용자 정보수정 테스트")
-    public void modifyAccount() {
+    public void modifyAccountTest() {
 
         JoinDto joinDto = JoinDto.builder()
                 .identifier("member")
@@ -108,7 +109,6 @@ class AccountServiceTest {
         AccountRequestDto accountRequestDto = AccountRequestDto.builder()
                 .identifier("modifyMember")
                 .name("modifyMember")
-                .password("qwer1234")
                 .birth(LocalDate.of(2006, 12, 26))
                 .phoneNumber("01012341234")
                 .age(19)
@@ -132,7 +132,7 @@ class AccountServiceTest {
 
     @Test
     @DisplayName("사용자 정보수정 아이디 중복 테스트")
-    public void modifyDuplicateIdentifier() {
+    public void modifyDuplicateIdentifierTest() {
         JoinDto joinDto1 = JoinDto.builder()
                 .identifier("member1")
                 .name("member1")
@@ -162,7 +162,6 @@ class AccountServiceTest {
         AccountRequestDto accountRequestDto = AccountRequestDto.builder()
                 .identifier("member2")
                 .name("modifyMember")
-                .password("qwer1234")
                 .birth(LocalDate.of(2006, 12, 26))
                 .phoneNumber("01012341234")
                 .age(19)
@@ -184,7 +183,7 @@ class AccountServiceTest {
 
     @Test
     @DisplayName("회원 정보 조회")
-    public void getAccount() {
+    public void getAccountTest() {
         JoinDto joinDto = JoinDto.builder()
                 .identifier("member")
                 .name("member")
@@ -207,4 +206,64 @@ class AccountServiceTest {
         assertThat(account.getName()).isEqualTo(joinDto.getName());
 
     }
+
+    @DisplayName("비밀번호 변경 테스트")
+    @Test
+    public void modifyPasswordTest() {
+        JoinDto joinDto = JoinDto.builder()
+                .identifier("member")
+                .name("member")
+                .password("qwer1234")
+                .birth(LocalDate.of(2006, 12, 26))
+                .phoneNumber("01012341234")
+                .height(180)
+                .weight(70)
+                .shoulderLength(80)
+                .armLength(90)
+                .waistLength(60)
+                .legLength(120)
+                .build();
+        AccountPatchRequestDto accountPatchRequestDto = AccountPatchRequestDto.builder()
+                .newPassword("abcdefg1234")
+                .value("qwer1234")
+                .build();
+
+        accountService.joinProcess(joinDto);
+        Account account = accountRepository.findByIdentifier(joinDto.getIdentifier());
+        Long id = account.getId();
+        String password = account.getPassword();
+        accountService.modifyPassword(id, accountPatchRequestDto);
+        String newPassword = accountRepository.findById(id).get().getPassword();
+
+        assertThat(password).isNotEqualTo(newPassword);
+    }
+
+    @DisplayName("비밀번호 수정 실패 테스트")
+    @Test
+    public void failModifyPasswordTest() {
+        JoinDto joinDto = JoinDto.builder()
+                .identifier("member")
+                .name("member")
+                .password("qwer1234")
+                .birth(LocalDate.of(2006, 12, 26))
+                .phoneNumber("01012341234")
+                .height(180)
+                .weight(70)
+                .shoulderLength(80)
+                .armLength(90)
+                .waistLength(60)
+                .legLength(120)
+                .build();
+        AccountPatchRequestDto accountPatchRequestDto = AccountPatchRequestDto.builder()
+                .newPassword("abcdefg1234")
+                .value("qwer12434")
+                .build();
+
+        accountService.joinProcess(joinDto);
+        Long id = accountRepository.findByIdentifier(joinDto.getIdentifier()).getId();
+
+        assertThrows(IllegalArgumentException.class, () ->
+                accountService.modifyPassword(id, accountPatchRequestDto));
+    }
+
 }

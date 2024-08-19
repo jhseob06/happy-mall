@@ -27,10 +27,10 @@ public class AccountResponseDto {
     @NotNull(message = "휴대폰 번호를 입력해주세요")
     private String phoneNumber;
 
-    @NotNull(message = "키를 입력해주세요")
+//    @NotNull(message = "키를 입력해주세요")
     private Integer height;
 
-    @NotNull(message = "몸무게를 입력해주세요")
+//    @NotNull(message = "몸무게를 입력해주세요")
     private Integer weight;
 
     @NotNull(message = "어깨 길이를 입력해주세요")

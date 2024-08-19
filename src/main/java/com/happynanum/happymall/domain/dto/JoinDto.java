@@ -17,7 +17,7 @@ import java.time.LocalDate;
 public class JoinDto {
 
     @NotBlank(message = "아이디를 입력해주세요")
-    @Pattern(regexp = "^[a-zA-Z0-9].{6,12}$",message = "아이디는 5~20자의 영어와 숫자의 조합만 가능합니다")
+    @Pattern(regexp = "^[a-zA-Z0-9]{5,20}$",message = "아이디는 5~20자의 영어와 숫자의 조합만 가능합니다")
     private String identifier;
 
     @NotBlank(message = "이름을 입력해주세요")
@@ -36,10 +36,10 @@ public class JoinDto {
     @Pattern(regexp = "^01([0|1|6|7|8|9]?)-?([0-9]{3,4})-?([0-9]{4})$")
     private String phoneNumber;
 
-    @NotNull(message = "키를 입력해주세요")
+//    @NotNull(message = "키를 입력해주세요")
     private Integer height;
 
-    @NotNull(message = "몸무게를 입력해주세요")
+//    @NotNull(message = "몸무게를 입력해주세요")
     private Integer weight;
 
     @NotNull(message = "어깨 길이를 입력해주세요")

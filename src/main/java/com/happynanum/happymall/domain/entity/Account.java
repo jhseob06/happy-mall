@@ -7,6 +7,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,6 +19,14 @@ public class Account {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToMany
+    @JoinTable(
+            name = "account_like",
+            joinColumns = @JoinColumn(name = "account_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private List<Product> products = new ArrayList<>();
 
     @NotBlank
     private String identifier;
@@ -36,10 +46,10 @@ public class Account {
     @NotNull
     private String phoneNumber;
 
-    @NotNull
+//    @NotNull
     private Integer height;
 
-    @NotNull
+//    @NotNull
     private Integer weight;
 
     @NotNull
@@ -66,5 +76,9 @@ public class Account {
     @NotNull
     @Column(columnDefinition = "timestamp")
     private LocalDateTime modifiedDate = LocalDateTime.now();
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 
 }

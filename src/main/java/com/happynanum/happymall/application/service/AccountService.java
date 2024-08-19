@@ -2,6 +2,7 @@ package com.happynanum.happymall.application.service;
 
 import com.happynanum.happymall.domain.dto.account.AccountRequestDto;
 import com.happynanum.happymall.domain.dto.account.AccountResponseDto;
+import com.happynanum.happymall.domain.dto.account.AccountPatchRequestDto;
 import com.happynanum.happymall.domain.entity.Account;
 import com.happynanum.happymall.domain.repository.AccountRepository;
 import com.happynanum.happymall.domain.dto.JoinDto;
@@ -24,7 +25,6 @@ public class AccountService {
 
     @Transactional
     public void joinProcess(JoinDto joinDto) {
-
         String identifier = joinDto.getIdentifier();
         duplicateAccountCheck(identifier);
 
@@ -71,8 +71,8 @@ public class AccountService {
                 .id(id)
                 .identifier(identifier)
                 .name(accountRequestDto.getName())
-                .password(bCryptPasswordEncoder.encode(accountRequestDto.getPassword()))
                 .birth(accountRequestDto.getBirth())
+                .password(account.getPassword())
                 .age(accountRequestDto.getAge())
                 .phoneNumber(accountRequestDto.getPhoneNumber())
                 .height(accountRequestDto.getHeight())
@@ -91,6 +91,7 @@ public class AccountService {
         log.info("사용자 정보수정 완료 = (기존아이디){} (변경후아이디){}", accountIdentifier, identifier);
     }
 
+    @Transactional
     public AccountResponseDto getAccount(Long id) {
         Account account = accountRepository.findById(id).orElseThrow(()->
                 new IllegalArgumentException("존재하지 않는 회원 식별자입니다 = " + id));
@@ -108,6 +109,28 @@ public class AccountService {
                 .waistLength(account.getWaistLength())
                 .legLength(account.getLegLength())
                 .build();
+    }
+
+    @Transactional
+    public void modifyPassword(Long id, AccountPatchRequestDto passwordRequestDto) {
+        Account account = accountRepository.findById(id).orElseThrow(()->
+                new IllegalArgumentException("존재하지 않는 회원 식별자입니다 = " + id));
+
+        String currentPassword = passwordRequestDto.getValue();
+        String newPassword = passwordRequestDto.getNewPassword();
+
+        boolean passwordMatch = bCryptPasswordEncoder.matches(currentPassword, account.getPassword());
+
+        if (!passwordMatch) {
+            throw new IllegalArgumentException("일치하지 않는 비밀번호입니다 = " + currentPassword);
+        }
+
+        account.updatePassword(bCryptPasswordEncoder.encode(newPassword));
+
+        accountRepository.save(account);
+
+        log.info("회원 비밀번호 수정 완료 = {}(회원 식별자) {}(기존 비밀번호) {}()새로운 비밀번호",
+                id, currentPassword, newPassword);
     }
 
     public void duplicateAccountCheck(String identifier){
