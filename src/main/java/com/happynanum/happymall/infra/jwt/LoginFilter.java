@@ -40,7 +40,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String identifier = customUserDetails.getIdentifier();
         String role = authResult.getAuthorities().iterator().next().getAuthority();
 
-        String token = jwtUtil.createJwt(id, identifier, role, 36000L);
+        String token = jwtUtil.createJwt(id, identifier, role, 36000L+500000L);
 
         response.addHeader("Authorization", "Bearer " + token);
         log.info("사용자 로그인 성공 = {}", identifier);

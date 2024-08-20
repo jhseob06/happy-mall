@@ -96,6 +96,7 @@ public class AccountService {
         Account account = accountRepository.findById(id).orElseThrow(()->
                 new IllegalArgumentException("존재하지 않는 회원 식별자입니다 = " + id));
 
+        log.info("사용자 회원조회 성공 = {}", account.getIdentifier());
         return AccountResponseDto.builder()
                 .identifier(account.getIdentifier())
                 .name(account.getName())
@@ -129,7 +130,7 @@ public class AccountService {
 
         accountRepository.save(account);
 
-        log.info("회원 비밀번호 수정 완료 = {}(회원 식별자) {}(기존 비밀번호) {}()새로운 비밀번호",
+        log.info("회원 비밀번호 수정 완료 = {}(회원 식별자) {}(기존 비밀번호) {}(새로운 비밀번호)",
                 id, currentPassword, newPassword);
     }
 
