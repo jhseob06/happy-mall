@@ -71,6 +71,7 @@ public class Account {
 
     public void updatePassword(String password) {
         this.password = password;
+        this.modifiedDate = LocalDateTime.now();
     }
 
 }

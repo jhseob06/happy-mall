@@ -96,8 +96,7 @@ public class AccountService {
         Account account = accountRepository.findById(id).orElseThrow(()->
                 new IllegalArgumentException("존재하지 않는 회원 식별자입니다 = " + id));
 
-        log.info("사용자 회원조회 성공 = {}", account.getIdentifier());
-        return AccountResponseDto.builder()
+        AccountResponseDto accountResponseDto = AccountResponseDto.builder()
                 .identifier(account.getIdentifier())
                 .name(account.getName())
                 .birth(account.getBirth())
@@ -110,6 +109,8 @@ public class AccountService {
                 .waistLength(account.getWaistLength())
                 .legLength(account.getLegLength())
                 .build();
+        log.info("사용자 회원조회 성공 = {}", account.getIdentifier());
+        return accountResponseDto;
     }
 
     @Transactional
@@ -134,7 +135,7 @@ public class AccountService {
                 id, currentPassword, newPassword);
     }
 
-    public void duplicateAccountCheck(String identifier){
+    private void duplicateAccountCheck(String identifier){
         if (accountRepository.existsByIdentifier(identifier)) {
             throw new IllegalArgumentException("이미 존재하는 아이디입니다 = " + identifier);
         }

@@ -38,10 +38,13 @@ public class Product {
     private Integer quantity;
 
     @NotNull
+    private Integer discount;
+
+    @NotNull
     private Integer reviewCount;
 
     @NotNull
-    private Integer saleCount;
+    private Integer purchaseCount;
 
     @Builder.Default
     @NotNull

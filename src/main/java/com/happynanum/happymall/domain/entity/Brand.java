@@ -18,10 +18,6 @@ public class Brand {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "account_id")
-    private Account account;
-
     @NotBlank
     private String name;
 

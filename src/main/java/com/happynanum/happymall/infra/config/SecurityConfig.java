@@ -6,6 +6,7 @@ import com.happynanum.happymall.infra.jwt.LoginFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -43,6 +44,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/join", "/", "/login").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/products*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/products*").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/brands*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/brands*").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class)
