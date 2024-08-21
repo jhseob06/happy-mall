@@ -1,5 +1,6 @@
 package com.happynanum.happymall.application.service;
 
+import com.happynanum.happymall.domain.dto.brand.BrandResponseDto;
 import com.happynanum.happymall.domain.dto.product.ProductRequestDto;
 import com.happynanum.happymall.domain.dto.product.ProductResponseDto;
 import com.happynanum.happymall.domain.entity.Brand;
@@ -9,7 +10,11 @@ import com.happynanum.happymall.domain.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,13 +31,20 @@ public class ProductService {
 
         ProductResponseDto productResponseDto = ProductResponseDto.builder()
                 .id(product.getId())
-                .brand(product.getBrand())
+                .brand(
+                        BrandResponseDto.builder()
+                                .name(product.getBrand().getName())
+                                .description(product.getBrand().getDescription())
+                                .phoneNumber(product.getBrand().getPhoneNumber())
+                                .build()
+                )
                 .name(product.getName())
                 .description(product.getDescription())
                 .price(product.getPrice())
                 .quantity(product.getQuantity())
                 .reviewCount(product.getReviewCount())
                 .purchaseCount(product.getPurchaseCount())
+                .discount(product.getDiscount())
                 .build();
 
         log.info("상품 조회 성공 = {}(식별자) {}(이름)",id, product.getName());

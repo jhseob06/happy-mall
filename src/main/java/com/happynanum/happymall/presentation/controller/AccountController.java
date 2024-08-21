@@ -58,4 +58,14 @@ public class AccountController {
         AccountResponseDto account = accountService.getAccount(id);
         return ResponseEntity.status(HttpStatus.OK).body(account);
     }
+
+    @DeleteMapping("/member")
+    public ResponseEntity<?> delete() {
+        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+        Long id = customUserDetails.getId();
+
+        accountService.deleteAccount(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

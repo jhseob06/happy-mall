@@ -266,4 +266,28 @@ class AccountServiceTest {
                 accountService.modifyPassword(id, accountPatchRequestDto));
     }
 
+    @DisplayName("회원 삭제 테스트")
+    @Test
+    public void deleteAccountTest() {
+        JoinDto joinDto = JoinDto.builder()
+                .identifier("member")
+                .name("member")
+                .password("qwer1234")
+                .birth(LocalDate.of(2006, 12, 26))
+                .phoneNumber("01012341234")
+                .height(180)
+                .weight(70)
+                .shoulderLength(80)
+                .armLength(90)
+                .waistLength(60)
+                .legLength(120)
+                .build();
+
+        accountService.joinProcess(joinDto);
+        Long id = accountRepository.findByIdentifier(joinDto.getIdentifier()).getId();
+        accountService.deleteAccount(id);
+
+        assertThat(accountRepository.count()).isEqualTo(0);
+    }
+
 }

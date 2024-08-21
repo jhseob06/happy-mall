@@ -135,6 +135,15 @@ public class AccountService {
                 id, currentPassword, newPassword);
     }
 
+    @Transactional
+    public void deleteAccount(Long id) {
+        Account account = accountRepository.findById(id).orElseThrow(()->
+                new IllegalArgumentException("존재하지 않는 회원 식별자입니다 = " + id));
+
+        accountRepository.delete(account);
+        log.info("회원 탈퇴 완료 = {}", id);
+    }
+
     private void duplicateAccountCheck(String identifier){
         if (accountRepository.existsByIdentifier(identifier)) {
             throw new IllegalArgumentException("이미 존재하는 아이디입니다 = " + identifier);

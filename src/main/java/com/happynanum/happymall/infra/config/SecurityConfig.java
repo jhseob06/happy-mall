@@ -48,6 +48,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/products*").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/brands*").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/brands*").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/categories*").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/categories*").hasAnyRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class)

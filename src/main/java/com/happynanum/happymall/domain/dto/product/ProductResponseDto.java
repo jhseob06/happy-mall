@@ -1,5 +1,6 @@
 package com.happynanum.happymall.domain.dto.product;
 
+import com.happynanum.happymall.domain.dto.brand.BrandResponseDto;
 import com.happynanum.happymall.domain.entity.Brand;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,7 +16,7 @@ public class ProductResponseDto {
     private Long id;
 
     @NotNull
-    private Brand brand;
+    private BrandResponseDto brand;
 
     @NotBlank
     private String name;
