@@ -1,6 +1,7 @@
 package com.happynanum.happymall.application.service;
 
 import com.happynanum.happymall.domain.repository.CategoryRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,11 @@ class CategoryServiceTest {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @AfterEach
+    void afterEach() {
+        categoryRepository.deleteAll();
+    }
 
     @DisplayName("카테고리 추가 테스트")
     @Test

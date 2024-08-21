@@ -4,8 +4,12 @@ import com.happynanum.happymall.domain.dto.brand.BrandResponseDto;
 import com.happynanum.happymall.domain.dto.product.ProductRequestDto;
 import com.happynanum.happymall.domain.dto.product.ProductResponseDto;
 import com.happynanum.happymall.domain.entity.Brand;
+import com.happynanum.happymall.domain.entity.Category;
 import com.happynanum.happymall.domain.entity.Product;
+import com.happynanum.happymall.domain.entity.ProductCategory;
 import com.happynanum.happymall.domain.repository.BrandRepository;
+import com.happynanum.happymall.domain.repository.CategoryRepository;
+import com.happynanum.happymall.domain.repository.ProductCategoryRepository;
 import com.happynanum.happymall.domain.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -71,6 +75,5 @@ public class ProductService {
         productRepository.save(product);
         log.info("상품 추가 완료 = {}(식별자) {}(이름)",product.getId(), product.getName());
     }
-
 
 }
