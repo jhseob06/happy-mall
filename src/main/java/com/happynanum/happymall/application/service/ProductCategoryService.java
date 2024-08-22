@@ -1,5 +1,6 @@
 package com.happynanum.happymall.application.service;
 
+import com.happynanum.happymall.domain.dto.brand.BrandResponseDto;
 import com.happynanum.happymall.domain.dto.product.ProductResponseDto;
 import com.happynanum.happymall.domain.entity.Category;
 import com.happynanum.happymall.domain.entity.Product;
@@ -52,7 +53,7 @@ public class ProductCategoryService {
 
         if (search == null) search = "";
 
-        if (categoryIds==null) categoryIds = List.of(categoryRepository.findByName("상품").getId());
+        if (categoryIds==null) categoryIds = List.of(categoryRepository.findByName("product").getId());
 
         if ("rowPrice".equalsIgnoreCase(sort)) {
             Sort sortByHighestPrice = Sort.by(Sort.Order.asc("product.price"));
@@ -80,6 +81,13 @@ public class ProductCategoryService {
         Page<ProductResponseDto> productResponseDtoPage = productPage.map(product ->
                 ProductResponseDto.builder()
                         .id(product.getId())
+                        .brand(
+                                BrandResponseDto.builder()
+                                        .name(product.getBrand().getName())
+                                        .description(product.getBrand().getDescription())
+                                        .phoneNumber(product.getBrand().getPhoneNumber())
+                                        .build()
+                        )
                         .name(product.getName())
                         .description(product.getDescription())
                         .price(product.getPrice())

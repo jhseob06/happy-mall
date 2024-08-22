@@ -36,7 +36,7 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<?> getProducts(
             @RequestBody(required = false) List<Long> categoryIds,
-            @RequestParam(required = false) int page,
+            @RequestParam int page,
             @RequestParam(required = false) String sort,
             @RequestParam(required = false) Integer lowestPrice,
             @RequestParam(required = false) Integer highestPrice,
