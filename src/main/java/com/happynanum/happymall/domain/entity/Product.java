@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,6 +24,7 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "brand_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Brand brand;
 
     @NotBlank
@@ -29,6 +32,7 @@ public class Product {
 
     @NotBlank
     @Lob
+    @Column(columnDefinition = "text")
     private String description;
 
     @NotNull

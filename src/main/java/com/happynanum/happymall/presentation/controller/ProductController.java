@@ -33,15 +33,27 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<?> addProductCategory(@PathVariable Long id, @RequestParam Long categoryId) {
-        productCategoryService.addProductCategory(id, categoryId);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @GetMapping
+    public ResponseEntity<?> getProducts(
+            @RequestBody(required = false) List<Long> categoryIds,
+            @RequestParam(required = false) int page,
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false) Integer lowestPrice,
+            @RequestParam(required = false) Integer highestPrice,
+            @RequestParam(required = false) String search){
+        Page<ProductResponseDto> products = productCategoryService.getProducts(categoryIds, page, sort, lowestPrice, highestPrice, search);
+        return ResponseEntity.ok().body(products);
     }
 
-    @GetMapping
-    public ResponseEntity<?> getProducts(@RequestParam List<Long> categoryIds, @RequestParam int page) {
-        Page<ProductResponseDto> products = productCategoryService.getProducts(categoryIds, page);
-        return ResponseEntity.ok().body(products);
+    @PutMapping("/{id}")
+    public ResponseEntity<?> modifyProduct(@PathVariable Long id, @RequestBody @Valid ProductRequestDto productRequestDto) {
+        productService.modifyProduct(id, productRequestDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

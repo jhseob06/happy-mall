@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -74,6 +75,39 @@ public class ProductService {
 
         productRepository.save(product);
         log.info("상품 추가 완료 = {}(식별자) {}(이름)",product.getId(), product.getName());
+    }
+
+    @Transactional
+    public void modifyProduct(Long id, ProductRequestDto productRequestDto) {
+        Product product = productRepository.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("존재하지 않는 상품 식별자입니다 = " + id));
+
+        Brand brand = brandRepository.findByName(productRequestDto.getBrandName()).orElseThrow(() ->
+                new IllegalArgumentException("존재하지 않는 브랜드입니다 = " + productRequestDto.getBrandName()));
+
+        Product modifiedProduct = Product.builder()
+                .id(product.getId())
+                .brand(brand)
+                .name(productRequestDto.getName())
+                .description(productRequestDto.getDescription())
+                .price(productRequestDto.getPrice())
+                .quantity(productRequestDto.getQuantity())
+                .discount(productRequestDto.getDiscount())
+                .reviewCount(product.getReviewCount())
+                .purchaseCount(product.getPurchaseCount())
+                .modifiedDate(LocalDateTime.now())
+                .build();
+
+        productRepository.save(modifiedProduct);
+        log.info("상품 수정 완료 = {}(식별자) {}(이름)",id, productRequestDto.getName());
+    }
+
+    @Transactional
+    public void deleteProduct(Long id){
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품 식별자입니다 = " + id));
+        productRepository.delete(product);
+        log.info("상품 삭제 완료 = {}", id);
     }
 
 }

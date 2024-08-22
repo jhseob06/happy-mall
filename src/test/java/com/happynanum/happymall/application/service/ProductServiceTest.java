@@ -7,6 +7,7 @@ import com.happynanum.happymall.domain.entity.Product;
 import com.happynanum.happymall.domain.repository.BrandRepository;
 import com.happynanum.happymall.domain.repository.ProductRepository;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +33,8 @@ class ProductServiceTest {
     @Autowired
     private AccountService accountService;
 
-    @AfterEach
-    void afterEach() {
+    @BeforeEach
+    void beforeEach() {
         productRepository.deleteAll();
         brandRepository.deleteAll();
     }
@@ -93,6 +94,82 @@ class ProductServiceTest {
         Long id = product.getId();
 
         assertThat(productService.getProduct(id).getName()).isEqualTo(productRequestDto.getName());
+    }
+
+    @DisplayName("상품 수정 테스트")
+    @Test
+    void modifyProductTest() {
+        ProductRequestDto productRequestDto = ProductRequestDto.builder()
+                .brandName("테스트 브랜드")
+                .name("테스트 상품")
+                .description("테스트 상품입니다.")
+                .price(10000)
+                .discount(0)
+                .quantity(1)
+                .build();
+        ProductRequestDto modifyProductRequestDto = ProductRequestDto.builder()
+                .brandName("테스트 브랜드")
+                .name("수정된 상품")
+                .description("수정된 상품입니다.")
+                .price(20000)
+                .discount(0)
+                .quantity(2)
+                .build();
+        addBrand();
+
+        productService.addProduct(productRequestDto);
+        Product product = productRepository.findByName(productRequestDto.getName());
+        Long id = product.getId();
+        productService.modifyProduct(id, modifyProductRequestDto);
+        Product modifiedProduct = productRepository.findById(id).get();
+
+        assertThat(modifiedProduct.getName()).isEqualTo(modifyProductRequestDto.getName());
+        assertThat(modifiedProduct.getDescription()).isEqualTo(modifyProductRequestDto.getDescription());
+        assertThat(modifiedProduct.getPrice()).isEqualTo(modifyProductRequestDto.getPrice());
+        assertThat(modifiedProduct.getQuantity()).isEqualTo(modifyProductRequestDto.getQuantity());
+    }
+
+    @DisplayName("상품 삭제 테스트")
+    @Test
+    void deleteProductTest() {
+        ProductRequestDto productRequestDto = ProductRequestDto.builder()
+                .brandName("테스트 브랜드")
+                .name("테스트 상품")
+                .description("테스트 상품입니다.")
+                .price(10000)
+                .discount(0)
+                .quantity(1)
+                .build();
+        addBrand();
+
+        productService.addProduct(productRequestDto);
+        Product product = productRepository.findByName(productRequestDto.getName());
+        Long id = product.getId();
+        productService.deleteProduct(id);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> productService.getProduct(id));
+    }
+
+    @DisplayName("브랜드 삭제시 상품삭제 테스트")
+    @Test
+    void deleteBrandTest() {
+        ProductRequestDto productRequestDto = ProductRequestDto.builder()
+                .brandName("테스트 브랜드")
+                .name("테스트 상품")
+                .description("테스트 상품입니다.")
+                .price(10000)
+                .discount(0)
+                .quantity(1)
+                .build();
+        addBrand();
+
+        productService.addProduct(productRequestDto);
+        Brand brand = brandRepository.findByName("테스트 브랜드").get();
+        Long id = brand.getId();
+        brandService.deleteBrand(id);
+
+        assertThat(productRepository.count()).isEqualTo(0);
     }
 
     void addBrand() {

@@ -12,9 +12,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.util.List;
 
 @Service
@@ -44,8 +45,38 @@ public class ProductCategoryService {
     }
 
     @Transactional
-    public Page<ProductResponseDto> getProducts(List<Long> categoryIds, int page) {
-        Page<Product> productPage = productRepository.findProductsByCategoryIds(categoryIds, PageRequest.of(5*(page-1), 5*page));
+    public Page<ProductResponseDto> getProducts(List<Long> categoryIds, int page, String sort, Integer lowestPrice, Integer highestPrice, String search) {
+
+        Pageable pageable = PageRequest.of(5*(page-1), 5*page);
+        Page<Product> productPage;
+
+        if (search == null) search = "";
+
+        if (categoryIds==null) categoryIds = List.of(categoryRepository.findByName("상품").getId());
+
+        if ("rowPrice".equalsIgnoreCase(sort)) {
+            Sort sortByHighestPrice = Sort.by(Sort.Order.asc("product.price"));
+            pageable = PageRequest.of(5*(page-1), 5*page, sortByHighestPrice);
+        }
+        else if("highPrice".equalsIgnoreCase(sort)) {
+            Sort sortByLowestPrice = Sort.by(Sort.Order.desc("product.price"));
+            pageable = PageRequest.of(5*(page-1), 5*page, sortByLowestPrice);
+        }
+        else if("reviewCount".equalsIgnoreCase(sort)) {
+            Sort sortByReviewCount = Sort.by(Sort.Order.desc("product.reviewCount"));
+            pageable = PageRequest.of(5*(page-1), 5*page, sortByReviewCount);
+        }
+        else if("purchaseCount".equalsIgnoreCase(sort)) {
+            Sort sortByPurchaseCount = Sort.by(Sort.Order.desc("product.purchaseCount"));
+            pageable = PageRequest.of(5*(page-1), 5*page, sortByPurchaseCount);
+        }
+
+        if (lowestPrice != null && highestPrice != null) {
+            productPage = productRepository.findProductsByCategoryIdsAndPriceRange(categoryIds, lowestPrice, highestPrice, pageable, search);
+        } else {
+            productPage = productRepository.findProductsByCategoryIds(categoryIds, pageable, search);
+        }
+
         Page<ProductResponseDto> productResponseDtoPage = productPage.map(product ->
                 ProductResponseDto.builder()
                         .id(product.getId())
@@ -58,7 +89,16 @@ public class ProductCategoryService {
                         .discount(product.getDiscount())
                         .build()
         );
-        log.info("상품 목록 조회 성공 = {}(페이지)",page);
+
+        log.info("상품 목록 조회 성공 = {}(페이지)", page);
         return productResponseDtoPage;
+    }
+
+    @Transactional
+    public void deleteProductCategory(Long id) {
+        ProductCategory productCategory = productCategoryRepository.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("존재하지 않는 상품 카테고리 식별자입니다 = " + id));
+        productCategoryRepository.delete(productCategory);
+        log.info("상품 카테고리 삭제 완료 = {}", id);
     }
 }

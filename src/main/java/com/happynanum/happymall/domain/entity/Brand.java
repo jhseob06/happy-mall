@@ -23,6 +23,7 @@ public class Brand {
 
     @NotBlank
     @Lob
+    @Column(columnDefinition = "text")
     private String description;
 
     @NotNull

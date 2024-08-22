@@ -14,8 +14,20 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<?> addCategory(@RequestBody String name){
+    public ResponseEntity<?> addCategory(@RequestParam String name){
         categoryService.addCategory(name);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> modifyCategory(@PathVariable Long id, @RequestParam String name){
+        categoryService.modifyCategory(id, name);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCategory(@PathVariable Long id){
+        categoryService.deleteCategory(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

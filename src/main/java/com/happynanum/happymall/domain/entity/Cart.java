@@ -3,6 +3,8 @@ package com.happynanum.happymall.domain.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -18,10 +20,12 @@ public class Cart {
 
     @ManyToOne
     @JoinColumn(name = "account_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Account account;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Product product;
 
     @NotNull

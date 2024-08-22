@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -19,6 +21,7 @@ public class Address {
 
     @ManyToOne
     @JoinColumn(name = "account_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Account account;
 
     @NotBlank

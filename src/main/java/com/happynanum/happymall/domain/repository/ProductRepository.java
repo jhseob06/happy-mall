@@ -14,6 +14,10 @@ public interface
 ProductRepository extends JpaRepository<Product, Long> {
     Product findByName(String name);
 
-    @Query("SELECT pc.product FROM ProductCategory pc WHERE pc.category.id IN :categoryIds")
-    Page<Product> findProductsByCategoryIds(List<Long> categoryIds, Pageable pageable);
+    @Query("SELECT pc.product FROM ProductCategory pc WHERE pc.category.id IN :categoryIds AND LOWER(pc.product.name) LIKE LOWER(CONCAT('%',:search,'%'))")
+    Page<Product> findProductsByCategoryIds(List<Long> categoryIds, Pageable pageable, String search);
+
+    @Query("SELECT pc.product FROM ProductCategory pc WHERE pc.category.id IN :categoryIds AND pc.product.price BETWEEN :lowestPrice AND :highestPrice AND LOWER(pc.product.name) LIKE LOWER(CONCAT('%',:search,'%'))")
+    Page<Product> findProductsByCategoryIdsAndPriceRange(List<Long> categoryIds, Integer lowestPrice, Integer highestPrice, Pageable pageable, String search);
+
 }

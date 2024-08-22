@@ -1,5 +1,6 @@
 package com.happynanum.happymall.infra.config;
 
+import com.happynanum.happymall.infra.handelr.GlobalExceptionHandler;
 import com.happynanum.happymall.infra.jwt.JwtFilter;
 import com.happynanum.happymall.infra.jwt.JwtUtil;
 import com.happynanum.happymall.infra.jwt.LoginFilter;
@@ -24,6 +25,7 @@ public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtUtil jwtUtil;
+    private final GlobalExceptionHandler globalExceptionHandler;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
@@ -50,6 +52,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/brands*").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/categories*").hasAnyRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/categories*").hasAnyRole("ADMIN")
+                        .requestMatchers("/product-categories*").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class)

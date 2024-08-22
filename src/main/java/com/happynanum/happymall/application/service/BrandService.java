@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -28,6 +31,37 @@ public class BrandService {
 
         brandRepository.save(brand);
         log.info("브랜드 추가 완료 = {}", brand.getName());
+    }
+
+    @Transactional
+    public void modifyBrand(Long id, BrandRequestDto brandRequestDto) {
+        String name = brandRequestDto.getName();
+
+        Brand brand = brandRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 브랜드 식별자입니다 = " + id));
+
+        if(!brandRequestDto.getName().equals(brand.getName()))
+            duplicateBrandCheck(name);
+
+        Brand modifiedBrand = Brand.builder()
+                .id(brand.getId())
+                .name(name)
+                .description(brandRequestDto.getDescription())
+                .productCount(brand.getProductCount())
+                .phoneNumber(brandRequestDto.getPhoneNumber())
+                .modifiedDate(LocalDateTime.now())
+                .build();
+
+        brandRepository.save(modifiedBrand);
+        log.info("브랜드 수정 완료 = {}", name);
+    }
+
+    @Transactional
+    public void deleteBrand(Long id) {
+        Brand brand = brandRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 브랜드 식별자입니다 = " + id));
+        brandRepository.delete(brand);
+        log.info("브랜드 삭제 완료 = {}", id);
     }
 
     private void duplicateBrandCheck(String name) {

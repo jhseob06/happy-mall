@@ -57,4 +57,42 @@ class BrandServiceTest {
         assertThrows(IllegalArgumentException.class,
                 () -> brandService.addBrand(brandRequestDto2));
     }
+
+    @DisplayName("브랜드 수정 테스트")
+    @Test
+    void brandModifyTest() {
+        BrandRequestDto brandRequestDto = BrandRequestDto.builder()
+                .name("뽀송")
+                .description("뽀송뽀송한 브랜드")
+                .phoneNumber("01012341234")
+                .build();
+        BrandRequestDto modifyBrandRequestDto = BrandRequestDto.builder()
+                .name("뽀송2")
+                .description("뽀송뽀송한 브랜드 수정")
+                .phoneNumber("01012341234")
+                .build();
+
+        brandService.addBrand(brandRequestDto);
+        Brand brand = brandRepository.findByName(brandRequestDto.getName()).get();
+        brandService.modifyBrand(brand.getId(), modifyBrandRequestDto);
+        Brand modifiedBrand = brandRepository.findByName(modifyBrandRequestDto.getName()).get();
+
+        assertThat(modifiedBrand.getDescription()).isEqualTo(modifyBrandRequestDto.getDescription());
+    }
+
+    @DisplayName("브랜드 삭제 테스트")
+    @Test
+    void brandDeleteTest() {
+        BrandRequestDto brandRequestDto = BrandRequestDto.builder()
+                .name("뽀송")
+                .description("뽀송뽀송한 브랜드")
+                .phoneNumber("01012341234")
+                .build();
+
+        brandService.addBrand(brandRequestDto);
+        Brand brand = brandRepository.findByName(brandRequestDto.getName()).get();
+        brandService.deleteBrand(brand.getId());
+
+        assertThat(brandRepository.findByName(brandRequestDto.getName())).isEmpty();
+    }
 }
