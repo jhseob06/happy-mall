@@ -49,7 +49,7 @@ public class BrandService {
                 .description(brandRequestDto.getDescription())
                 .productCount(brand.getProductCount())
                 .phoneNumber(brandRequestDto.getPhoneNumber())
-                .modifiedDate(LocalDateTime.now())
+                .createdDate(brand.getCreatedDate())
                 .build();
 
         brandRepository.save(modifiedBrand);

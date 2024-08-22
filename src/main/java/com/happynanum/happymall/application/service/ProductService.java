@@ -95,7 +95,7 @@ public class ProductService {
                 .discount(productRequestDto.getDiscount())
                 .reviewCount(product.getReviewCount())
                 .purchaseCount(product.getPurchaseCount())
-                .modifiedDate(LocalDateTime.now())
+                .createdDate(product.getCreatedDate())
                 .build();
 
         productRepository.save(modifiedProduct);

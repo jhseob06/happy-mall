@@ -82,7 +82,6 @@ public class AccountService {
                 .waistLength(accountRequestDto.getWaistLength())
                 .legLength(accountRequestDto.getLegLength())
                 .createdDate(account.getCreatedDate())
-                .modifiedDate(LocalDateTime.now())
                 .role(account.getRole())
                 .build();
 
@@ -128,7 +127,6 @@ public class AccountService {
         }
 
         account.updatePassword(bCryptPasswordEncoder.encode(newPassword));
-
         accountRepository.save(account);
 
         log.info("회원 비밀번호 수정 완료 = {}(회원 식별자) {}(기존 비밀번호) {}(새로운 비밀번호)",
