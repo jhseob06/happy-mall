@@ -42,6 +42,7 @@ public class ProductController {
             @RequestParam(required = false) Integer highestPrice,
             @RequestParam(required = false) String search){
         Page<ProductResponseDto> products = productCategoryService.getProducts(categoryIds, page, sort, lowestPrice, highestPrice, search);
+        System.out.println(search);
         return ResponseEntity.ok().body(products);
     }
 

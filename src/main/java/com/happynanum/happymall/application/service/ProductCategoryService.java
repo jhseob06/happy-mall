@@ -48,7 +48,7 @@ public class ProductCategoryService {
     @Transactional
     public Page<ProductResponseDto> getProducts(List<Long> categoryIds, int page, String sort, Integer lowestPrice, Integer highestPrice, String search) {
 
-        Pageable pageable = PageRequest.of(5*(page-1), 5*page);
+        Pageable pageable = PageRequest.of(page-1, 5);
         Page<Product> productPage;
 
         if (search == null) search = "";
