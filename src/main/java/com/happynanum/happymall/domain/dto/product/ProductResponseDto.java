@@ -12,31 +12,31 @@ import lombok.*;
 @NoArgsConstructor
 public class ProductResponseDto {
 
-    @NotNull
+    @NotNull(message = "상품 식별자를 입력해주세요")
     private Long id;
 
-    @NotNull
+    @NotNull(message = "브랜드를 입력해주세요")
     private BrandResponseDto brand;
 
-    @NotBlank
+    @NotBlank(message = "상품 이름을 입력해주세요")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "상품 설명을 입력해주세요")
     private String description;
 
-    @NotNull
+    @NotNull(message = "상품 가격을 입력해주세요")
     private Integer price;
 
-    @NotNull
+    @NotNull(message = "상품 수량을 입력해주세요")
     private Integer quantity;
 
-    @NotNull
+    @NotNull(message = "상품 할인율을 입력해주세요")
     private Integer discount;
 
-    @NotNull
+    @NotNull(message = "상품 리뷰 수를 입력해주세요")
     private Integer reviewCount;
 
-    @NotNull
+    @NotNull(message = "상품 구매 수를 입력해주세요")
     private Integer purchaseCount;
 
 }

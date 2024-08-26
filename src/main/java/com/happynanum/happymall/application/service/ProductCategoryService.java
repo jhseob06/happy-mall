@@ -53,29 +53,40 @@ public class ProductCategoryService {
 
         if (search == null) search = "";
 
-        if (categoryIds==null) categoryIds = List.of(categoryRepository.findByName("product").getId());
+        if (categoryIds==null) {
+            System.out.println("안녕하세요");
+            categoryIds = List.of(categoryRepository.findByName("product").getId());
+        }
 
         if ("lowPrice".equalsIgnoreCase(sort)) {
+            System.out.println("lowPrice");
             Sort sortByHighestPrice = Sort.by(Sort.Order.asc("product.price"));
             pageable = PageRequest.of(5*(page-1), 5*page, sortByHighestPrice);
         }
         else if("highPrice".equalsIgnoreCase(sort)) {
+            System.out.println("highPrice");
             Sort sortByLowestPrice = Sort.by(Sort.Order.desc("product.price"));
             pageable = PageRequest.of(5*(page-1), 5*page, sortByLowestPrice);
         }
         else if("reviewCount".equalsIgnoreCase(sort)) {
+            System.out.println("reviewCount");
             Sort sortByReviewCount = Sort.by(Sort.Order.desc("product.reviewCount"));
             pageable = PageRequest.of(5*(page-1), 5*page, sortByReviewCount);
         }
         else if("purchaseCount".equalsIgnoreCase(sort)) {
+            System.out.println("purchaseCount");
             Sort sortByPurchaseCount = Sort.by(Sort.Order.desc("product.purchaseCount"));
             pageable = PageRequest.of(5*(page-1), 5*page, sortByPurchaseCount);
         }
 
         if (lowestPrice != null && highestPrice != null) {
             productPage = productRepository.findProductsByCategoryIdsAndPriceRange(categoryIds, lowestPrice, highestPrice, pageable, search);
+            System.out.println(1);
         } else {
             productPage = productRepository.findProductsByCategoryIds(categoryIds, pageable, search);
+            categoryIds.forEach(System.out::println);
+            System.out.println(search);
+            System.out.println(2);
         }
 
         Page<ProductResponseDto> productResponseDtoPage = productPage.map(product ->

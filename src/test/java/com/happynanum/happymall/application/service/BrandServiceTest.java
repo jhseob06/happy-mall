@@ -19,8 +19,8 @@ class BrandServiceTest {
     @Autowired
     private BrandRepository brandRepository;
 
-    @AfterEach
-    void afterEach() {
+    @BeforeEach
+    void beforeEach() {
         brandRepository.deleteAll();
     }
 

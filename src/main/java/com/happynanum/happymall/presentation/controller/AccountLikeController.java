@@ -17,7 +17,7 @@ public class AccountLikeController {
 
     private final AccountLikeService accountLikeService;
 
-    @PostMapping("/account-likes")
+    @PostMapping("/likes")
     public ResponseEntity<?> addAccountLike(@RequestParam Long productId) {
         CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
@@ -28,7 +28,7 @@ public class AccountLikeController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping("/account-likes")
+    @GetMapping("/likes")
     public ResponseEntity<?> getAccountLikes() {
         CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
@@ -39,7 +39,7 @@ public class AccountLikeController {
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 
-    @DeleteMapping("/account-likes")
+    @DeleteMapping("/likes")
     public ResponseEntity<?> deleteAccountLike(@RequestParam Long productId) {
         CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();

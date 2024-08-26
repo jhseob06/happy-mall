@@ -34,7 +34,7 @@ public class Address {
     private String detailedAddress;
 
     @NotNull
-    private Integer code;
+    private Integer zoneCode;
 
     @Builder.Default
     @NotNull

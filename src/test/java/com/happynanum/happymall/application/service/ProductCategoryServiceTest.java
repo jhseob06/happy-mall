@@ -50,8 +50,8 @@ class ProductCategoryServiceTest {
         brandRepository.deleteAll();
         categoryRepository.deleteAll();
 
-        categoryService.addCategory("상품");
-        categoryId = categoryRepository.findByName("상품").getId();
+        categoryService.addCategory("product");
+        categoryId = categoryRepository.findByName("product").getId();
     }
 
     @DisplayName("기본 상품 카테고리 조회 테스트")
@@ -225,7 +225,7 @@ class ProductCategoryServiceTest {
         productCategoryService.addProductCategory(productId1, categoryId);
         productCategoryService.addProductCategory(productId2, categoryId);
         productCategoryService.addProductCategory(productId3, categoryId);
-        Page<ProductResponseDto> productResponseDtoPage = productCategoryService.getProducts(null, 1, "rowPrice", null, null, null);
+        Page<ProductResponseDto> productResponseDtoPage = productCategoryService.getProducts(null, 1, "lowPrice", null, null, null);
 
         assertThat(productResponseDtoPage.getContent().get(0).getPrice()).isEqualTo(10);
     }
