@@ -55,7 +55,7 @@ public class ProductCategoryService {
 
         if (categoryIds==null) categoryIds = List.of(categoryRepository.findByName("product").getId());
 
-        if ("rowPrice".equalsIgnoreCase(sort)) {
+        if ("lowPrice".equalsIgnoreCase(sort)) {
             Sort sortByHighestPrice = Sort.by(Sort.Order.asc("product.price"));
             pageable = PageRequest.of(5*(page-1), 5*page, sortByHighestPrice);
         }
