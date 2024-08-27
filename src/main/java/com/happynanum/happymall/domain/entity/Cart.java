@@ -41,4 +41,8 @@ public class Cart {
     @Column(columnDefinition = "timestamp")
     private LocalDateTime modifiedDate = LocalDateTime.now();
 
+    public void updateQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+
 }

@@ -64,7 +64,7 @@ public class AccountLikeService {
 
     private void duplicateAccountLikeCheck(Account account, Product product) {
         if (accountLikeRepository.existsByAccountAndProduct(account, product)) {
-            throw new IllegalArgumentException("이미 찜한 상품입니다 = " + account.getId() + "(회원아이디) " + product.getId() + "(상품아이디)");
+            throw new IllegalArgumentException("이미 찜한 상품입니다 = " + product.getName());
         }
     }
 
