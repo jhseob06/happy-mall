@@ -58,6 +58,8 @@ public class ProductCategoryService {
             categoryIds = List.of(categoryRepository.findByName("product").getId());
         }
 
+        int categoryCount = categoryIds.size();
+
         if ("lowPrice".equalsIgnoreCase(sort)) {
             System.out.println("lowPrice");
             Sort sortByHighestPrice = Sort.by(Sort.Order.asc("product.price"));
@@ -80,10 +82,10 @@ public class ProductCategoryService {
         }
 
         if (lowestPrice != null && highestPrice != null) {
-            productPage = productRepository.findProductsByCategoryIdsAndPriceRange(categoryIds, lowestPrice, highestPrice, pageable, search);
+            productPage = productRepository.findProductsByCategoryIdsAndPriceRange(categoryIds, categoryCount, lowestPrice, highestPrice, pageable, search);
             System.out.println(1);
         } else {
-            productPage = productRepository.findProductsByCategoryIds(categoryIds, pageable, search);
+            productPage = productRepository.findProductsByCategoryIds(categoryIds, categoryCount, pageable, search);
             categoryIds.forEach(System.out::println);
             System.out.println(search);
             System.out.println(2);

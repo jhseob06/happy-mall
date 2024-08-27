@@ -14,13 +14,19 @@ public interface
 ProductRepository extends JpaRepository<Product, Long> {
     Product findByName(String name);
 
-    @Query("SELECT pc.product FROM ProductCategory pc WHERE pc.category.id IN :categoryIds AND LOWER(CONCAT(pc.product.name, pc.product.description, pc.product.brand.name)) LIKE LOWER(CONCAT('%',:search,'%'))")
-    Page<Product> findProductsByCategoryIds(List<Long> categoryIds, Pageable pageable, String search);
+    @Query("SELECT pc.product FROM ProductCategory pc WHERE pc.category.id IN :categoryIds " +
+            "AND LOWER(CONCAT(pc.product.name, pc.product.description, pc.product.brand.name)) " +
+            "LIKE LOWER(CONCAT('%',:search,'%')) " +
+            "GROUP BY pc.product.id " +
+            "HAVING COUNT(DISTINCT pc.category.id) = :categoryCount")
+    Page<Product> findProductsByCategoryIds(List<Long> categoryIds, int categoryCount, Pageable pageable, String search);
 
     @Query("SELECT pc.product FROM ProductCategory pc WHERE pc.category.id IN :categoryIds" +
             " AND pc.product.price BETWEEN :lowestPrice AND :highestPrice " +
             "AND LOWER(CONCAT(pc.product.name, pc.product.description, pc.product.brand.name)) " +
-            "LIKE LOWER(CONCAT('%',:search,'%'))")
-    Page<Product> findProductsByCategoryIdsAndPriceRange(List<Long> categoryIds, Integer lowestPrice, Integer highestPrice, Pageable pageable, String search);
+            "LIKE LOWER(CONCAT('%',:search,'%'))" +
+            "GROUP BY pc.product.id " +
+            "HAVING COUNT(DISTINCT pc.category.id) = :categoryCount")
+    Page<Product> findProductsByCategoryIdsAndPriceRange(List<Long> categoryIds, int categoryCount, Integer lowestPrice, Integer highestPrice, Pageable pageable, String search);
 
 }
