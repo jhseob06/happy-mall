@@ -13,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -26,7 +28,7 @@ public class AddressService {
         Account account = accountRepository.findById(accountId).orElseThrow(() ->
                 new IllegalArgumentException("존재하지 않는 사용자 식별자입니다 = " + accountId));
 
-        duplicateAddressCheck(addressRequestDto.getName());
+        duplicateAddressCheck(account, addressRequestDto.getName());
 
         Address address = Address.builder()
                 .account(account)
@@ -41,8 +43,7 @@ public class AddressService {
     }
 
     @Transactional
-    public void modifyAddress(Long addressId, AddressRequestDto addressRequestDto) {
-        Long accountId = addressRequestDto.getAccountId();
+    public void modifyAddress(Long accountId, Long addressId, AddressRequestDto addressRequestDto) {
         Account account = accountRepository.findById(accountId).orElseThrow(() ->
                 new IllegalArgumentException("존재하지 않는 사용자 식별자입니다 = " + accountId));
 
@@ -50,11 +51,16 @@ public class AddressService {
                 new IllegalArgumentException("존재하지 않는 주소 식별자입니다 = " + addressId));
 
         if(!addressRequestDto.getName().equals(address.getName())) {
-            duplicateAddressCheck(addressRequestDto.getName());
+            duplicateAddressCheck(account, addressRequestDto.getName());
+        }
+
+        if(!address.getAccount().equals(account)) {
+            throw new IllegalArgumentException("해당 주소는 사용자의 주소가 아닙니다 = " + addressId);
         }
 
         Address modifiedAddress = Address.builder()
                 .id(address.getId())
+                .account(account)
                 .name(addressRequestDto.getName())
                 .basicAddress(addressRequestDto.getBasicAddress())
                 .detailedAddress(addressRequestDto.getDetailedAddress())
@@ -63,13 +69,17 @@ public class AddressService {
                 .build();
 
         addressRepository.save(modifiedAddress);
-        log.info("주소 수정 완료 = {}(사용자 식별자), {}(주소 이름)", accountId, address.getName());
+        log.info("주소 수정 완료 = {}(사용자 식별자), {}(주소 이름)", account.getId(), address.getName());
     }
 
     @Transactional
-    public void deleteAddress(Long addressId) {
+    public void deleteAddress(Long accountId, Long addressId) {
         Address address = addressRepository.findById(addressId).orElseThrow(() ->
                 new IllegalArgumentException("존재하지 않는 주소 식별자입니다 = " + addressId));
+
+        if(!address.getAccount().getId().equals(accountId)) {
+            throw new IllegalArgumentException("해당 주소는 사용자의 주소가 아닙니다 = " + addressId);
+        }
 
         addressRepository.delete(address);
         log.info("주소 삭제 완료 = {}(주소 식별자)", addressId);
@@ -110,8 +120,8 @@ public class AddressService {
         return addressResponseDto;
     }
 
-    private void duplicateAddressCheck(String name) {
-        if (addressRepository.existsByName(name)) {
+    private void duplicateAddressCheck(Account account, String name) {
+        if (addressRepository.existsByAccountAndName(account, name)) {
             throw new IllegalArgumentException("이미 존재하는 주소 이름입니다 = " + name);
         }
     }

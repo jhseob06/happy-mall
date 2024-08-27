@@ -96,7 +96,7 @@ class AddressServiceTest {
         Long accountId = accountRepository.findByIdentifier("member").getId();
         addressService.addAddress(accountId, addressRequestDto);
         Long addressId = addressRepository.findByName("테스트주소").getId();
-        addressService.modifyAddress(addressId, modifyAddressRequestDto);
+        addressService.modifyAddress(accountId, addressId, modifyAddressRequestDto);
 
         assertEquals(addressRepository.findById(addressId).get().getName(), "수정주소");
     }
@@ -128,7 +128,7 @@ class AddressServiceTest {
         Long accountId = accountRepository.findByIdentifier("member").getId();
         addressService.addAddress(accountId, addressRequestDto);
         Long addressId = addressRepository.findByName("테스트주소").getId();
-        addressService.deleteAddress(addressId);
+        addressService.deleteAddress(accountId, addressId);
 
         assertThat(addressRepository.findAll().size()).isEqualTo(0);
     }
