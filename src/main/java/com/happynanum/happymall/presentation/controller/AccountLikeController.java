@@ -2,6 +2,7 @@ package com.happynanum.happymall.presentation.controller;
 
 import com.happynanum.happymall.application.service.AccountLikeService;
 import com.happynanum.happymall.domain.dto.CustomUserDetails;
+import com.happynanum.happymall.domain.dto.product.ProductResponseDto;
 import com.happynanum.happymall.domain.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,11 +14,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/likes")
 public class AccountLikeController {
 
     private final AccountLikeService accountLikeService;
 
-    @PostMapping("/likes")
+    @PostMapping
     public ResponseEntity<?> addAccountLike(@RequestParam Long productId) {
         CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
@@ -28,18 +30,18 @@ public class AccountLikeController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping("/likes")
+    @GetMapping
     public ResponseEntity<?> getAccountLikes() {
         CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
         Long accountId = customUserDetails.getId();
 
-        List<Product> products = accountLikeService.getProducts(accountId);
+        List<ProductResponseDto> products = accountLikeService.getProducts(accountId);
 
         return ResponseEntity.status(HttpStatus.OK).body(products);
     }
 
-    @DeleteMapping("/likes")
+    @DeleteMapping
     public ResponseEntity<?> deleteAccountLike(@RequestParam Long productId) {
         CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();

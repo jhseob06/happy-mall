@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/addresses")
@@ -51,12 +53,12 @@ public class AddressController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAddresses(@RequestParam int page) {
+    public ResponseEntity<?> getAddresses() {
         CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
         Long accountId = customUserDetails.getId();
 
-        Page<AddressResponseDto> addressPage = addressService.getAddresses(accountId, page);
+        List<AddressResponseDto> addressPage = addressService.getAddresses(accountId);
 
         return ResponseEntity.ok().body(addressPage);
     }

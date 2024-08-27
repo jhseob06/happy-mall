@@ -1,5 +1,7 @@
 package com.happynanum.happymall.application.service;
 
+import com.happynanum.happymall.domain.dto.brand.BrandResponseDto;
+import com.happynanum.happymall.domain.dto.product.ProductResponseDto;
 import com.happynanum.happymall.domain.entity.Account;
 import com.happynanum.happymall.domain.entity.AccountLike;
 import com.happynanum.happymall.domain.entity.Product;
@@ -29,7 +31,9 @@ public class AccountLikeService {
          Product product = productRepository.findById(productId).orElseThrow(() ->
                  new IllegalArgumentException("존재하지 않는 상품 식별자입니다 = " + productId));
 
-        AccountLike accountLike = AccountLike.builder()
+         duplicateAccountLikeCheck(account, product);
+
+         AccountLike accountLike = AccountLike.builder()
                 .account(account)
                 .product(product)
                 .build();
@@ -39,18 +43,49 @@ public class AccountLikeService {
     }
 
     @Transactional
-    public List<Product> getProducts(Long accountId) {
+    public List<ProductResponseDto> getProducts(Long accountId) {
         List<Product> products = accountLikeRepository.findProductsByAccountId(accountId);
+
+        List<ProductResponseDto> productResponseDtos = products.stream()
+                .map(this::productToProductResponseDto)
+                .toList();
+
         log.info("사용자 찜 목록 조회 완료 = {}", accountId);
-        return products;
+        return productResponseDtos;
     }
 
     @Transactional
     public void deleteAccountLike(Long accountId, Long productId) {
         AccountLike accountLike = accountLikeRepository.findByAccountIdAndProductId(accountId, productId).orElseThrow(()->
-                new IllegalArgumentException("존재하지 않는 사용자 찜입니다 = " + accountId + " " + productId));
+                new IllegalArgumentException("존재하지 않는 사용자 찜입니다 = " + accountId + "(회원아이디) " + productId + "(상품아이디)"));
         accountLikeRepository.delete(accountLike);
         log.info("사용자 찜 삭제 완료 = {}", accountLike.getId());
+    }
+
+    private void duplicateAccountLikeCheck(Account account, Product product) {
+        if (accountLikeRepository.existsByAccountAndProduct(account, product)) {
+            throw new IllegalArgumentException("이미 찜한 상품입니다 = " + account.getId() + "(회원아이디) " + product.getId() + "(상품아이디)");
+        }
+    }
+
+    private ProductResponseDto productToProductResponseDto(Product product) {
+        return ProductResponseDto.builder()
+                .id(product.getId())
+                .brand(
+                        BrandResponseDto.builder()
+                                .name(product.getBrand().getName())
+                                .description(product.getBrand().getDescription())
+                                .phoneNumber(product.getBrand().getPhoneNumber())
+                                .build()
+                )
+                .name(product.getName())
+                .description(product.getDescription())
+                .price(product.getPrice())
+                .quantity(product.getQuantity())
+                .reviewCount(product.getReviewCount())
+                .purchaseCount(product.getPurchaseCount())
+                .discount(product.getDiscount())
+                .build();
     }
 
 }

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -86,18 +87,16 @@ public class AddressService {
     }
 
     @Transactional
-    public Page<AddressResponseDto> getAddresses(Long accountId, int page) {
-        Page<Address> addressPage =
-                addressRepository.findAllByAccountId(accountId, PageRequest.of(page-1, 5));
+    public List<AddressResponseDto> getAddresses(Long accountId) {
 
-        Page<AddressResponseDto> addressResponseDtoPage = addressPage.map(address ->
-                AddressResponseDto.builder()
-                        .id(address.getId())
-                        .name(address.getName())
-                        .basicAddress(address.getBasicAddress())
-                        .detailedAddress(address.getDetailedAddress())
-                        .zoneCode(address.getZoneCode())
-                        .build());
+        Account account = accountRepository.findById(accountId).orElseThrow(() ->
+                new IllegalArgumentException("존재하지 않는 사용자 식별자입니다 = " + accountId));
+
+        List<Address> addressPage = addressRepository.findAddressesByAccount(account);
+
+        List<AddressResponseDto> addressResponseDtoPage = addressPage.stream()
+                .map(this::addressToAddressResponseDto)
+                .toList();
 
         log.info("주소 목록 조회 성공 = {}(사용자 식별자)", accountId);
         return addressResponseDtoPage;
@@ -118,6 +117,16 @@ public class AddressService {
 
         log.info("주소 조회 성공 = {}(주소 식별자)", addressId);
         return addressResponseDto;
+    }
+
+    private AddressResponseDto addressToAddressResponseDto(Address address) {
+        return AddressResponseDto.builder()
+                .id(address.getId())
+                .name(address.getName())
+                .basicAddress(address.getBasicAddress())
+                .detailedAddress(address.getDetailedAddress())
+                .zoneCode(address.getZoneCode())
+                .build();
     }
 
     private void duplicateAddressCheck(Account account, String name) {

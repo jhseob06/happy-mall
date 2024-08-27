@@ -54,29 +54,24 @@ public class ProductCategoryService {
         if (search == null) search = "";
 
         if (categoryIds==null) {
-            System.out.println("안녕하세요");
             categoryIds = List.of(categoryRepository.findByName("product").getId());
         }
 
         int categoryCount = categoryIds.size();
 
         if ("lowPrice".equalsIgnoreCase(sort)) {
-            System.out.println("lowPrice");
             Sort sortByHighestPrice = Sort.by(Sort.Order.asc("product.price"));
             pageable = PageRequest.of(5*(page-1), 5*page, sortByHighestPrice);
         }
         else if("highPrice".equalsIgnoreCase(sort)) {
-            System.out.println("highPrice");
             Sort sortByLowestPrice = Sort.by(Sort.Order.desc("product.price"));
             pageable = PageRequest.of(5*(page-1), 5*page, sortByLowestPrice);
         }
         else if("reviewCount".equalsIgnoreCase(sort)) {
-            System.out.println("reviewCount");
             Sort sortByReviewCount = Sort.by(Sort.Order.desc("product.reviewCount"));
             pageable = PageRequest.of(5*(page-1), 5*page, sortByReviewCount);
         }
         else if("purchaseCount".equalsIgnoreCase(sort)) {
-            System.out.println("purchaseCount");
             Sort sortByPurchaseCount = Sort.by(Sort.Order.desc("product.purchaseCount"));
             pageable = PageRequest.of(5*(page-1), 5*page, sortByPurchaseCount);
         }
@@ -91,25 +86,8 @@ public class ProductCategoryService {
             System.out.println(2);
         }
 
-        Page<ProductResponseDto> productResponseDtoPage = productPage.map(product ->
-                ProductResponseDto.builder()
-                        .id(product.getId())
-                        .brand(
-                                BrandResponseDto.builder()
-                                        .name(product.getBrand().getName())
-                                        .description(product.getBrand().getDescription())
-                                        .phoneNumber(product.getBrand().getPhoneNumber())
-                                        .build()
-                        )
-                        .name(product.getName())
-                        .description(product.getDescription())
-                        .price(product.getPrice())
-                        .quantity(product.getQuantity())
-                        .reviewCount(product.getReviewCount())
-                        .purchaseCount(product.getPurchaseCount())
-                        .discount(product.getDiscount())
-                        .build()
-        );
+        Page<ProductResponseDto> productResponseDtoPage =
+                productPage.map(this::productToProductResponseDto);
 
         log.info("상품 목록 조회 성공 = {}(페이지)", page);
         return productResponseDtoPage;
@@ -121,5 +99,25 @@ public class ProductCategoryService {
                 new IllegalArgumentException("존재하지 않는 상품 카테고리 식별자입니다 = " + id));
         productCategoryRepository.delete(productCategory);
         log.info("상품 카테고리 삭제 완료 = {}", id);
+    }
+
+    private ProductResponseDto productToProductResponseDto(Product product) {
+        return ProductResponseDto.builder()
+                .id(product.getId())
+                .brand(
+                        BrandResponseDto.builder()
+                                .name(product.getBrand().getName())
+                                .description(product.getBrand().getDescription())
+                                .phoneNumber(product.getBrand().getPhoneNumber())
+                                .build()
+                )
+                .name(product.getName())
+                .description(product.getDescription())
+                .price(product.getPrice())
+                .quantity(product.getQuantity())
+                .reviewCount(product.getReviewCount())
+                .purchaseCount(product.getPurchaseCount())
+                .discount(product.getDiscount())
+                .build();
     }
 }

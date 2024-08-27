@@ -203,6 +203,6 @@ class AddressServiceTest {
         addressService.addAddress(accountId, addressRequestDto1);
         addressService.addAddress(accountId, addressRequestDto2);
 
-        assertThat(addressService.getAddresses(accountId, 1).get().count()).isEqualTo(2);
+        assertThat(addressService.getAddresses(accountId).size()).isEqualTo(2);
     }
 }
