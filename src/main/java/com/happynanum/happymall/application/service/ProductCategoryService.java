@@ -57,6 +57,17 @@ public class ProductCategoryService {
             categoryIds = List.of(categoryRepository.findByName("product").getId());
         }
 
+        for (Long categoryId : categoryIds) {
+            if(categoryId>=53 && categoryId<=58) {
+                categoryIds.removeIf(id -> id>=59 && id<=68);
+                break;
+            }
+            else if(categoryId>=59 && categoryId<=68) {
+                categoryIds.removeIf(id -> id>=53 && id<=58);
+                break;
+            }
+        }
+
         int categoryCount = categoryIds.size();
 
         if ("lowPrice".equalsIgnoreCase(sort)) {
@@ -78,12 +89,8 @@ public class ProductCategoryService {
 
         if (lowestPrice != null && highestPrice != null) {
             productPage = productRepository.findProductsByCategoryIdsAndPriceRange(categoryIds, categoryCount, lowestPrice, highestPrice, pageable, search);
-            System.out.println(1);
         } else {
             productPage = productRepository.findProductsByCategoryIds(categoryIds, categoryCount, pageable, search);
-            categoryIds.forEach(System.out::println);
-            System.out.println(search);
-            System.out.println(2);
         }
 
         Page<ProductResponseDto> productResponseDtoPage =

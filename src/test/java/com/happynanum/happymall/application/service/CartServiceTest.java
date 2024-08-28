@@ -58,6 +58,7 @@ class CartServiceTest {
         ProductRequestDto productRequestDto = ProductRequestDto.builder()
                 .brandName("테스트 브랜드")
                 .name("테스트 상품")
+
                 .description("테스트 상품입니다.")
                 .price(10000)
                 .discount(0)
@@ -98,6 +99,7 @@ class CartServiceTest {
                 .brandName("테스트 브랜드")
                 .name("테스트 상품")
                 .description("테스트 상품입니다.")
+
                 .price(10000)
                 .discount(0)
                 .quantity(1)
@@ -139,6 +141,7 @@ class CartServiceTest {
                 .brandName("테스트 브랜드")
                 .name("테스트 상품1")
                 .description("테스트 상품입니다.")
+
                 .price(10000)
                 .discount(0)
                 .quantity(1)
@@ -147,6 +150,7 @@ class CartServiceTest {
                 .brandName("테스트 브랜드")
                 .name("테스트 상품2")
                 .description("테스트 상품입니다.")
+
                 .price(10000)
                 .discount(0)
                 .quantity(1)
@@ -190,6 +194,7 @@ class CartServiceTest {
                 .brandName("테스트 브랜드")
                 .name("테스트 상품")
                 .description("테스트 상품입니다.")
+
                 .price(10000)
                 .discount(0)
                 .quantity(1)
@@ -229,6 +234,7 @@ class CartServiceTest {
         ProductRequestDto productRequestDto = ProductRequestDto.builder()
                 .brandName("테스트 브랜드")
                 .name("테스트 상품")
+
                 .description("테스트 상품입니다.")
                 .price(10000)
                 .discount(0)

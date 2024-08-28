@@ -61,6 +61,7 @@ class ProductCategoryServiceTest {
                 .brandName("테스트 브랜드")
                 .name("테스트 상품1")
                 .description("테스트 상품입니다.")
+
                 .price(10000)
                 .discount(0)
                 .quantity(1)
@@ -69,6 +70,7 @@ class ProductCategoryServiceTest {
                 .brandName("테스트 브랜드")
                 .name("테스트 상품2")
                 .description("테스트 상품입니다.")
+
                 .price(10000)
                 .discount(0)
                 .quantity(1)
@@ -97,6 +99,7 @@ class ProductCategoryServiceTest {
                 .brandName("테스트 브랜드")
                 .name("테스트 상품1")
                 .description("테스트 상품입니다.")
+
                 .price(10000)
                 .discount(0)
                 .quantity(1)
@@ -105,6 +108,7 @@ class ProductCategoryServiceTest {
                 .brandName("테스트 브랜드")
                 .name("테스트 상품2")
                 .description("테스트 상품입니다.")
+
                 .price(10000)
                 .discount(0)
                 .quantity(1)
@@ -113,6 +117,7 @@ class ProductCategoryServiceTest {
                 .brandName("테스트 브랜드")
                 .name("테스트 상품3")
                 .description("테스트 상품입니다.")
+
                 .price(10000)
                 .discount(0)
                 .quantity(1)
@@ -148,6 +153,7 @@ class ProductCategoryServiceTest {
                 .brandName("테스트 브랜드")
                 .name("테스트 상품1")
                 .description("테스트 상품입니다.")
+
                 .price(50000)
                 .discount(0)
                 .quantity(1)
@@ -156,6 +162,7 @@ class ProductCategoryServiceTest {
                 .brandName("테스트 브랜드")
                 .name("테스트 상품2")
                 .description("테스트 상품입니다.")
+
                 .price(10)
                 .discount(0)
                 .quantity(1)
@@ -164,6 +171,7 @@ class ProductCategoryServiceTest {
                 .brandName("테스트 브랜드")
                 .name("테스트 상품3")
                 .description("테스트 상품입니다.")
+
                 .price(10000)
                 .discount(0)
                 .quantity(1)
@@ -194,6 +202,7 @@ class ProductCategoryServiceTest {
                 .brandName("테스트 브랜드")
                 .name("테스트 상품1")
                 .description("테스트 상품입니다.")
+
                 .price(50000)
                 .discount(0)
                 .quantity(1)
@@ -203,6 +212,7 @@ class ProductCategoryServiceTest {
                 .name("테스트 상품2")
                 .description("테스트 상품입니다.")
                 .price(10)
+
                 .discount(0)
                 .quantity(1)
                 .build();
@@ -211,6 +221,7 @@ class ProductCategoryServiceTest {
                 .name("테스트 상품3")
                 .description("테스트 상품입니다.")
                 .price(1000)
+
                 .discount(0)
                 .quantity(1)
                 .build();
@@ -238,6 +249,7 @@ class ProductCategoryServiceTest {
                 .name("테스트 상품1")
                 .description("테스트 상품입니다.")
                 .price(50000)
+
                 .discount(0)
                 .quantity(1)
                 .build();
@@ -246,6 +258,7 @@ class ProductCategoryServiceTest {
                 .name("테스트 상품2")
                 .description("테스트 상품입니다.")
                 .price(10)
+
                 .discount(0)
                 .quantity(1)
                 .build();
@@ -269,6 +282,7 @@ class ProductCategoryServiceTest {
                 .brandName("테스트 브랜드")
                 .name("테스트 상품1")
                 .description("테스트 상품입니다.")
+
                 .price(50000)
                 .discount(0)
                 .quantity(1)
@@ -277,6 +291,7 @@ class ProductCategoryServiceTest {
                 .brandName("테스트 브랜드")
                 .name("테스트 상품2")
                 .description("테스트 상품입니다.")
+
                 .price(10)
                 .discount(0)
                 .quantity(1)
