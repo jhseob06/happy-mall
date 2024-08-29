@@ -60,4 +60,9 @@ public class Product {
     @Column(columnDefinition = "timestamp")
     private LocalDateTime modifiedDate = LocalDateTime.now();
 
+    public void purchaseProduct(Integer quantity) {
+        this.purchaseCount++;
+        this.quantity -= quantity;
+    }
+
 }
