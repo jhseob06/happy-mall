@@ -19,4 +19,7 @@ public class OrdersRequestDto {
     @NotNull(message = "구매하실 수량을 입력해주세요")
     private Integer quantity;
 
+    @NotNull(message = "사이즈를 입력해주세요")
+    private String size;
+
 }

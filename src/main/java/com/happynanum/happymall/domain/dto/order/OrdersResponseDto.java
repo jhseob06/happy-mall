@@ -26,6 +26,9 @@ public class OrdersResponseDto {
     @NotBlank(message = "배송 상태를 입력해주세요")
     private String deliveryStatus;
 
+    @NotBlank(message = "사이즈를 입력해주세요")
+    private String size;
+
     @NotNull(message = "결제 금액을 입력해주세요")
     private Integer amount;
 

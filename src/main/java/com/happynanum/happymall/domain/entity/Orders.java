@@ -37,6 +37,9 @@ public class Orders {
     @NotBlank
     private String deliveryStatus;
 
+    @NotBlank
+    private String size;
+
     @NotNull
     private Integer code;
 

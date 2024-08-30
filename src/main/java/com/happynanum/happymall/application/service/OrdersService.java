@@ -103,6 +103,7 @@ public class OrdersService {
         orderData.put(orderNo + "account", account);
         orderData.put(orderNo + "address", address);
         orderData.put(orderNo + "quantity", ordersRequestDto.getQuantity());
+        orderData.put(orderNo + "size", ordersRequestDto.getSize());
 
         log.info("결제 생성에 성공했습니다 = {}(orderNo) {}(checkoutPage)", orderNo, checkoutPage);
         return orderNo + "," + checkoutPage;
@@ -132,6 +133,7 @@ public class OrdersService {
         Account account = (Account) orderData.get(orderNo + "account");
         Address address = (Address) orderData.get(orderNo + "address");
         int quantity = (int) orderData.get(orderNo + "quantity");
+        String size = (String) orderData.get(orderNo + "size");
 
         product.purchaseProduct(quantity);
         productRepository.save(product);
@@ -143,6 +145,7 @@ public class OrdersService {
                 .address(address)
                 .quantity(quantity)
                 .deliveryStatus("결제완료")
+                .size(size)
                 .code(jsonNode.get("code").asInt())
                 .mode(jsonNode.get("mode").asText())
                 .stateMsg(jsonNode.get("stateMsg").asText())
@@ -173,6 +176,7 @@ public class OrdersService {
         orderData.remove(orderNo + "address");
         orderData.remove(orderNo + "quantity");
         orderData.remove(orderNo + "payToken");
+        orderData.remove(orderNo + "size");
 
         log.info("결제 완료 = {}", order.getId());
     }
@@ -187,6 +191,7 @@ public class OrdersService {
         orderData.remove(orderNo + "address");
         orderData.remove(orderNo + "quantity");
         orderData.remove(orderNo + "payToken");
+        orderData.remove(orderNo + "size");
 
         log.info("결제 취소 완료 = {}", orderNo);
     }
@@ -259,6 +264,7 @@ public class OrdersService {
                 .productDesc(order.getProduct().getName())
                 .quantity(order.getQuantity())
                 .deliveryStatus(order.getDeliveryStatus())
+                .size(order.getSize())
                 .amount(order.getAmount())
                 .discountAmount(order.getDiscountAmount())
                 .payMethod(order.getPayMethod())
