@@ -63,9 +63,23 @@ public class CartService {
             }
 
             cartRepository.delete(cart);
-            log.info("장바구니 삭제 완료 = {}(사용자 식별자), {}(장바구니 식별자)", accountId, cartId);
+            log.info("장바구니 삭제 완료 = {}(사용자 식별자), {}(상품 식별자)", accountId, cartId);
         }
 
+        @Transactional
+        public void deleteCartByProductId(Long accountId, Long productId) {
+            Account account = accountRepository.findById(accountId).orElseThrow(() ->
+                    new IllegalArgumentException("존재하지 않는 사용자 식별자입니다 = " + accountId));
+
+            Product product = productRepository.findById(productId).orElseThrow(() ->
+                    new IllegalArgumentException("존재하지 않는 상품 식별자입니다 = " + productId));
+
+            Cart cart = cartRepository.findCartByAccountAndProduct(account, product).orElseThrow(() ->
+                    new IllegalArgumentException("존재하지 않는 장바구니입니다 = " + productId));
+
+            cartRepository.delete(cart);
+            log.info("장바구니 삭제 완료 = {}(사용자 식별자), {}(장바구니 식별자)", accountId, cart.getId());
+        }
 
         @Transactional
         public List<CartResponseDto> getCarts(Long accountId) {

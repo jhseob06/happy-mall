@@ -1,5 +1,6 @@
 package com.happynanum.happymall.domain.dto.order;
 
+import com.happynanum.happymall.domain.dto.address.AddressData;
 import com.happynanum.happymall.domain.dto.address.AddressResponseDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,8 +12,14 @@ import lombok.*;
 @NoArgsConstructor
 public class OrdersResponseDto {
 
+    @NotNull(message = "주문 식별자를 입력해주세요")
+    private Long id;
+
     @NotNull(message = "주소를 입력해주세요")
-    private AddressResponseDto address;
+    private AddressData address;
+
+    @NotNull(message = "상품 식별자를 입력해주세요")
+    private Long productId;
 
     @NotBlank(message = "주문 번호를 입력해주세요")
     private String orderNo;

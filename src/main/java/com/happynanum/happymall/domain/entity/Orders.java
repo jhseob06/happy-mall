@@ -1,6 +1,8 @@
 package com.happynanum.happymall.domain.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.happynanum.happymall.domain.dto.address.AddressData;
+import com.happynanum.happymall.domain.dto.address.AddressResponseDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,17 +21,19 @@ public class Orders {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @NotNull
+    private Long productId;
+
+    @NotBlank
+    private String productName;
+
+    @NotNull
+    @Embedded
+    private AddressData addressData;
 
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
-
-    @ManyToOne
-    @JoinColumn(name = "address_id")
-    private Address address;
 
     @NotNull
     private Integer quantity;
@@ -108,7 +112,9 @@ public class Orders {
     private LocalDateTime modifiedDate = LocalDateTime.now();
 
     public void updateAddress(Address address) {
-        this.address = address;
+        this.addressData.setBasicAddress(address.getBasicAddress());
+        this.addressData.setDetailedAddress(address.getDetailedAddress());
+        this.addressData.setZoneCode(address.getZoneCode());
         this.modifiedDate = LocalDateTime.now();
     }
 

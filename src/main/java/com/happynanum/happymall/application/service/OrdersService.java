@@ -3,6 +3,7 @@ package com.happynanum.happymall.application.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.happynanum.happymall.domain.dto.address.AddressData;
 import com.happynanum.happymall.domain.dto.address.AddressResponseDto;
 import com.happynanum.happymall.domain.dto.order.OrdersResponseDto;
 import com.happynanum.happymall.domain.dto.order.OrdersTransmitDto;
@@ -140,9 +141,17 @@ public class OrdersService {
         log.info("상품 구매수 및 수량 조정 완료 = {}(상품 아이디)", product.getId());
 
         Orders order = Orders.builder()
-                .product(product)
+                .productId(product.getId())
+                .productName(product.getName())
+                .addressData(
+                        AddressData.builder()
+                                .basicAddress(address.getBasicAddress())
+                                .detailedAddress(address.getDetailedAddress())
+                                .zoneCode(address.getZoneCode())
+                                .build()
+
+                )
                 .account(account)
-                .address(address)
                 .quantity(quantity)
                 .deliveryStatus("결제완료")
                 .size(size)
@@ -251,17 +260,17 @@ public class OrdersService {
 
     private OrdersResponseDto orderToOrderResponseDto(Orders order) {
         return OrdersResponseDto.builder()
+                .id(order.getId())
                 .address(
-                        AddressResponseDto.builder()
-                                .id(order.getAddress().getId())
-                                .name(order.getAddress().getName())
-                                .basicAddress(order.getAddress().getBasicAddress())
-                                .detailedAddress(order.getAddress().getDetailedAddress())
-                                .zoneCode(order.getAddress().getZoneCode())
+                        AddressData.builder()
+                                .basicAddress(order.getAddressData().getBasicAddress())
+                                .detailedAddress(order.getAddressData().getDetailedAddress())
+                                .zoneCode(order.getAddressData().getZoneCode())
                                 .build()
                 )
+                .productId(order.getProductId())
                 .orderNo(order.getOrderNo())
-                .productDesc(order.getProduct().getName())
+                .productDesc(order.getProductName())
                 .quantity(order.getQuantity())
                 .deliveryStatus(order.getDeliveryStatus())
                 .size(order.getSize())

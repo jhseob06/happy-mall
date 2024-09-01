@@ -36,13 +36,17 @@ public class CartController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{cartId}")
-    public ResponseEntity<?> deleteCart(@PathVariable Long cartId){
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCart(
+            @PathVariable Long id,
+            @RequestParam(required = false) Integer byProduct){
         CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
         Long accountId = customUserDetails.getId();
 
-        cartService.deleteCart(accountId, cartId);
+        if(byProduct==1) cartService.deleteCartByProductId(accountId, id);
+        else cartService.deleteCart(accountId, id);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

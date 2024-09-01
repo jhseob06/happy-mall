@@ -257,6 +257,48 @@ class CartServiceTest {
         assertEquals(20, cartRepository.findAll().get(0).getQuantity());
     }
 
+    @DisplayName("상품 아이디로 장바구니 삭제 테스트")
+    @Test
+    void deleteCartByProduct() {
+        JoinDto joinDto = JoinDto.builder()
+                .identifier("member")
+                .name("member")
+                .password("qwer1234")
+                .birth(LocalDate.of(2006, 12, 26))
+                .phoneNumber("01012341234")
+                .height(180)
+                .weight(70)
+                .shoulderLength(80)
+                .armLength(90)
+                .waistLength(60)
+                .legLength(120)
+                .build();
+        ProductRequestDto productRequestDto = ProductRequestDto.builder()
+                .brandName("테스트 브랜드")
+                .name("테스트 상품")
+
+                .description("테스트 상품입니다.")
+                .price(10000)
+                .discount(0)
+                .quantity(1)
+                .build();
+        CartRequestDto cartRequestDto = new CartRequestDto();
+        cartRequestDto.setQuantity(10);
+        addBrand();
+
+        accountService.joinProcess(joinDto);
+        productService.addProduct(productRequestDto);
+        Account account = accountRepository.findByIdentifier("member");
+        Product product = productRepository.findByName("테스트 상품");
+        cartRequestDto.setAccountId(account.getId());
+        cartRequestDto.setProductId(product.getId());
+        cartService.addCart(cartRequestDto);
+
+        cartService.deleteCartByProductId(account.getId(), product.getId());
+
+        assertEquals(0, cartRepository.count());
+    }
+
     void addBrand() {
         if(brandRepository.findByName("테스트 브랜드").isPresent()) return;
         BrandRequestDto brand = BrandRequestDto.builder()
