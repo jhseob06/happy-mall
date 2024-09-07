@@ -19,7 +19,7 @@ public class CategoryController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<?> modifyCategory(@PathVariable Long id, @RequestParam String name){
         categoryService.modifyCategory(id, name);
         return new ResponseEntity<>(HttpStatus.OK);

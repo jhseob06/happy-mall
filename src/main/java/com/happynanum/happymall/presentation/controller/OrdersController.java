@@ -53,9 +53,9 @@ public class OrdersController {
         return ResponseEntity.ok().body(orders);
     }
 
-    @PatchMapping("/orders/{orderNo}")
+    @PatchMapping("/orders/{orderId}")
     public ResponseEntity<?> patchOrder(
-            @RequestParam Long orderId,
+            @PathVariable Long orderId,
             @RequestParam(required = false) Long addressId,
             @RequestParam(required = false) String deliveryStatus) {
         if(addressId != null) {
