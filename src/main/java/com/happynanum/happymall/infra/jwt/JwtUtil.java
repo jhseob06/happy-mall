@@ -30,12 +30,17 @@ public class JwtUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
     }
 
+    public String getCategory(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
+    }
+
     public boolean isExpired(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-    public String createJwt(Long id, String identifier, String role, Long expiredMs) {
+    public String createJwt(String category, Long id, String identifier, String role, Long expiredMs) {
         return Jwts.builder()
+                .claim("category", category)
                 .claim("id", id)
                 .claim("identifier", identifier)
                 .claim("role", role)

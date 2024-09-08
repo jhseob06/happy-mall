@@ -1,6 +1,8 @@
 package com.happynanum.happymall.infra.config;
 
-import com.happynanum.happymall.infra.handelr.GlobalExceptionHandler;
+import com.happynanum.happymall.application.service.LogoutService;
+import com.happynanum.happymall.domain.repository.RefreshRepository;
+import com.happynanum.happymall.infra.jwt.CustomLogoutFilter;
 import com.happynanum.happymall.infra.jwt.JwtFilter;
 import com.happynanum.happymall.infra.jwt.JwtUtil;
 import com.happynanum.happymall.infra.jwt.LoginFilter;
@@ -17,6 +19,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -25,7 +28,8 @@ public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtUtil jwtUtil;
-    private final GlobalExceptionHandler globalExceptionHandler;
+    private final RefreshRepository refreshRepository;
+    private final LogoutService logoutService;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
@@ -44,7 +48,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/join", "/", "/login", "/orders/success", "orders/cancel").permitAll()
+                        .requestMatchers("/join", "/", "/login", "/orders/success", "orders/cancel", "/reissue").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/products*").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/products*").hasAnyRole("ADMIN")
@@ -56,7 +60,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class)
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new CustomLogoutFilter(logoutService), LogoutFilter.class)
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

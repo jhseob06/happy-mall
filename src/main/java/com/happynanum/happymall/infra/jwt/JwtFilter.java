@@ -2,6 +2,7 @@ package com.happynanum.happymall.infra.jwt;
 
 import com.happynanum.happymall.domain.dto.CustomUserDetails;
 import com.happynanum.happymall.domain.entity.Account;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 
 @RequiredArgsConstructor
@@ -25,25 +27,39 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authorization = request.getHeader("Authorization");
 
-        if (authorization == null || !authorization.startsWith("Bearer ")) {
-            log.warn("token null");
+        String access = request.getHeader("access");
+
+        if(access == null || !access.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = authorization.split(" ")[1];
+        access = access.split("")[1];
 
-        if (jwtUtil.isExpired(token)) {
-            log.warn("token expired");
-            filterChain.doFilter(request, response);
+        try {
+            jwtUtil.isExpired(access);
+        } catch (ExpiredJwtException e) {
+
+            PrintWriter writer = response.getWriter();
+            writer.print("expired token");
+
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
-        Long id = jwtUtil.getId(token);
-        String identifier = jwtUtil.getIdentifier(token);
-        String role = jwtUtil.getRole(token);
+        String category = jwtUtil.getCategory(access);
+        if(!category.equals("access")) {
+            PrintWriter writer = response.getWriter();
+            writer.print ("invalid access token");
+
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        Long id = jwtUtil.getId(access);
+        String identifier = jwtUtil.getIdentifier(access);
+        String role = jwtUtil.getRole(access);
         Account account = Account.builder()
                 .id(id)
                 .identifier(identifier)
