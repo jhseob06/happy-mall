@@ -21,7 +21,7 @@
 <br>
 
 ## ERD
-![ERD](https://github.com/jhseob06/happy-mall/blob/main/스크린샷%202024-09-08%20오후%204.56.41.png)
+![ERD](https://github.com/jhseob06/happy-mall/blob/main/erd.png)
 [<ERD 연결>](https://www.erdcloud.com/d/Tgjz7iDzaZcG7TkR9)
 
 <br>
