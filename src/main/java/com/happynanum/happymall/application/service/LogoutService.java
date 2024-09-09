@@ -1,6 +1,5 @@
 package com.happynanum.happymall.application.service;
 
-import com.happynanum.happymall.domain.repository.RefreshRepository;
 import com.happynanum.happymall.infra.jwt.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -11,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -21,7 +21,7 @@ import java.io.IOException;
 public class LogoutService {
 
     private final JwtUtil jwtUtil;
-    private final RefreshRepository refreshRepository;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
     public void logout(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -65,13 +65,13 @@ public class LogoutService {
             return;
         }
 
-        boolean isExist = refreshRepository.existsByRefresh(refresh);
+        boolean isExist = redisTemplate.hasKey(refresh);
         if (!isExist) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
-        refreshRepository.deleteByRefresh(refresh);
+        redisTemplate.delete(refresh);
 
         Cookie cookie = new Cookie("refresh", null);
         cookie.setMaxAge(0);

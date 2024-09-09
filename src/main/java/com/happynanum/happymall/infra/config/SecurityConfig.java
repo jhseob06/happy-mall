@@ -1,7 +1,6 @@
 package com.happynanum.happymall.infra.config;
 
 import com.happynanum.happymall.application.service.LogoutService;
-import com.happynanum.happymall.domain.repository.RefreshRepository;
 import com.happynanum.happymall.infra.jwt.CustomLogoutFilter;
 import com.happynanum.happymall.infra.jwt.JwtFilter;
 import com.happynanum.happymall.infra.jwt.JwtUtil;
@@ -9,6 +8,7 @@ import com.happynanum.happymall.infra.jwt.LoginFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -28,8 +28,8 @@ public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtUtil jwtUtil;
-    private final RefreshRepository refreshRepository;
     private final LogoutService logoutService;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
@@ -61,7 +61,7 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class)
                 .addFilterBefore(new CustomLogoutFilter(logoutService), LogoutFilter.class)
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, redisTemplate), UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

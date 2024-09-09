@@ -1,7 +1,5 @@
 package com.happynanum.happymall.application.service;
 
-import com.happynanum.happymall.domain.entity.Refresh;
-import com.happynanum.happymall.domain.repository.RefreshRepository;
 import com.happynanum.happymall.infra.jwt.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
@@ -11,9 +9,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +20,7 @@ public class ReissueService {
 
     private static final Logger log = LoggerFactory.getLogger(ReissueService.class);
     private final JwtUtil jwtUtil;
-    private final RefreshRepository refreshRepository;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Transactional
     public void reissue(HttpServletRequest request, HttpServletResponse response) {
@@ -50,7 +49,7 @@ public class ReissueService {
             throw new IllegalArgumentException("invalid refresh token");
         }
 
-        boolean isExist = refreshRepository.existsByRefresh(refresh);
+        boolean isExist = redisTemplate.hasKey(refresh);
         if (!isExist) {
             throw new IllegalArgumentException("invalid refresh token");
         }
@@ -62,13 +61,8 @@ public class ReissueService {
         String newAccess = jwtUtil.createJwt("access", id, identifier, role, 600000L);
         String newRefresh = jwtUtil.createJwt("refresh", id, identifier, role, 86400000L);
 
-        refreshRepository.deleteByRefresh(refresh);
-        Refresh refreshEntity = Refresh.builder()
-                .identifier(identifier)
-                .refresh(newRefresh)
-                .expiration(new Date(System.currentTimeMillis() + 86400000L))
-                .build();
-        refreshRepository.save(refreshEntity);
+        redisTemplate.delete(refresh);
+        redisTemplate.opsForValue().set(newRefresh, "true", 86400000L, TimeUnit.MILLISECONDS);
 
         response.addHeader("access", "Bearer " + newAccess);
         response.addCookie(createCookie("refresh", newRefresh));
