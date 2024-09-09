@@ -28,14 +28,14 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String access = request.getHeader("access");
+        String access = request.getHeader("Authorization");
 
         if(access == null || !access.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        access = access.split("")[1];
+        access = access.split(" ")[1];
 
         try {
             jwtUtil.isExpired(access);

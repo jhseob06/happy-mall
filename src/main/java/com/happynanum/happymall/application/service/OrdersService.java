@@ -60,6 +60,8 @@ public class OrdersService {
     private String paymentUrl;
     @Value("${toss_pay.execute_url}")
     private String executeUrl;
+    @Value("${toss_pay.refund_url}")
+    private String refundUrl;
 
     @Transactional
     public String createPayment(OrdersRequestDto ordersRequestDto, Long accountId) throws JsonProcessingException {
@@ -136,8 +138,19 @@ public class OrdersService {
         int quantity = (int) orderData.get(orderNo + "quantity");
         String size = (String) orderData.get(orderNo + "size");
 
+        if(product.getQuantity() < 0) {
+            runUrl(refundUrl, orderTransmitDto);
+            throw new IllegalArgumentException("재고가 부족합니다.");
+        }
         product.purchaseProduct(quantity);
-        productRepository.save(product);
+
+        try {
+            productRepository.save(product);
+        }catch (Exception e) {
+            runUrl(refundUrl, orderTransmitDto);
+            throw new IllegalArgumentException("상품 구매수 및 수량 조정에 실패하였습니다.");
+        }
+
         log.info("상품 구매수 및 수량 조정 완료 = {}(상품 아이디)", product.getId());
 
         Orders order = Orders.builder()
@@ -290,6 +303,7 @@ public class OrdersService {
                 requestEntity,
                 String.class
         );
+
         return objectMapper.readTree(responseEntity.getBody());
     }
 
