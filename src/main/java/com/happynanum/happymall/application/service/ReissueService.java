@@ -49,7 +49,7 @@ public class ReissueService {
             throw new IllegalArgumentException("invalid refresh token");
         }
 
-        boolean isExist = redisTemplate.hasKey(refresh);
+        boolean isExist = redisTemplate.hasKey("refresh:"+refresh);
         if (!isExist) {
             throw new IllegalArgumentException("invalid refresh token");
         }
@@ -61,8 +61,8 @@ public class ReissueService {
         String newAccess = jwtUtil.createJwt("access", id, identifier, role, 600000L);
         String newRefresh = jwtUtil.createJwt("refresh", id, identifier, role, 86400000L);
 
-        redisTemplate.delete(refresh);
-        redisTemplate.opsForValue().set(newRefresh, "true", 86400000L, TimeUnit.MILLISECONDS);
+        redisTemplate.delete("refresh:"+refresh);
+        redisTemplate.opsForValue().set("refresh"+newRefresh, "true", 86400000L, TimeUnit.MILLISECONDS);
 
         response.addHeader("access", "Bearer " + newAccess);
         response.addCookie(createCookie("refresh", newRefresh));

@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -37,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -48,9 +50,9 @@ public class OrdersService {
     private final AddressRepository addressRepository;
     private final ProductRepository productRepository;
 
-    private final Map<String, Object> orderData = new ConcurrentHashMap<>();
     private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Value("${project.domain}")
     private String domain;
@@ -101,12 +103,19 @@ public class OrdersService {
         String payToken = responseNode.get("payToken").asText();
         String checkoutPage = responseNode.get("checkoutPage").asText();
 
-        orderData.put(orderNo + "payToken", payToken);
-        orderData.put(orderNo + "product", product);
-        orderData.put(orderNo + "account", account);
-        orderData.put(orderNo + "address", address);
-        orderData.put(orderNo + "quantity", ordersRequestDto.getQuantity());
-        orderData.put(orderNo + "size", ordersRequestDto.getSize());
+        log.info(payToken);
+        log.info(product.getId().toString());
+        log.info(account.getId().toString());
+        log.info(address.getId().toString());
+        log.info(ordersRequestDto.getQuantity().toString());
+        log.info(ordersRequestDto.getSize());
+
+        redisTemplate.opsForValue().set("order:payToken:"+orderNo, payToken, 3600000, TimeUnit.MILLISECONDS);
+        redisTemplate.opsForValue().set("order:product:"+orderNo, product.getId().toString(), 3600000, TimeUnit.MILLISECONDS);
+        redisTemplate.opsForValue().set("order:account:"+orderNo, account.getId().toString(), 3600000, TimeUnit.MILLISECONDS);
+        redisTemplate.opsForValue().set("order:address:"+orderNo, address.getId().toString(), 3600000, TimeUnit.MILLISECONDS);
+        redisTemplate.opsForValue().set("order:quantity:"+orderNo, ordersRequestDto.getQuantity().toString(), 3600000, TimeUnit.MILLISECONDS);
+        redisTemplate.opsForValue().set("order:size:"+orderNo, ordersRequestDto.getSize(), 3600000, TimeUnit.MILLISECONDS);
 
         log.info("결제 생성에 성공했습니다 = {}(orderNo) {}(checkoutPage)", orderNo, checkoutPage);
         return orderNo + "," + checkoutPage;
@@ -115,11 +124,11 @@ public class OrdersService {
 
     @Transactional
     public void successLogic(String orderNo) throws JsonProcessingException {
-        if (!orderData.containsKey(orderNo + "payToken")) {
+        if (!redisTemplate.hasKey("order:payToken:"+orderNo)) {
             throw new IllegalArgumentException("결제 정보가 존재하지 않습니다.");
         }
 
-        String payToken = (String) orderData.get(orderNo + "payToken");
+        String payToken = redisTemplate.opsForValue().get("order:payToken:"+orderNo);
         OrdersTransmitDto orderTransmitDto = OrdersTransmitDto.builder()
                 .apiKey(apiKey)
                 .orderNo(orderNo)
@@ -132,26 +141,24 @@ public class OrdersService {
             throw new IllegalArgumentException("결제 진행에 실패하였습니다. = " + jsonNode.get("msg").asText());
         }
 
-        Product product = (Product) orderData.get(orderNo + "product");
-        Account account = (Account) orderData.get(orderNo + "account");
-        Address address = (Address) orderData.get(orderNo + "address");
-        int quantity = (int) orderData.get(orderNo + "quantity");
-        String size = (String) orderData.get(orderNo + "size");
+        Long productId = Long.parseLong(redisTemplate.opsForValue().get("order:product:"+orderNo));
+        Long accountId = Long.parseLong(redisTemplate.opsForValue().get("order:account:"+orderNo));
+        Long addressId = Long.parseLong(redisTemplate.opsForValue().get("order:address:"+orderNo));
+        int quantity = Integer.parseInt(redisTemplate.opsForValue().get("order:quantity:"+orderNo));
+        String size = redisTemplate.opsForValue().get("order:size:"+orderNo);
+
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 주소가 존재하지 않습니다."));
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 존재하지 않습니다."));
 
         if(product.getQuantity() < 0) {
             runUrl(refundUrl, orderTransmitDto);
             throw new IllegalArgumentException("재고가 부족합니다.");
         }
         product.purchaseProduct(quantity);
-
-        try {
-            productRepository.save(product);
-        }catch (Exception e) {
-            runUrl(refundUrl, orderTransmitDto);
-            throw new IllegalArgumentException("상품 구매수 및 수량 조정에 실패하였습니다.");
-        }
-
-        log.info("상품 구매수 및 수량 조정 완료 = {}(상품 아이디)", product.getId());
 
         Orders order = Orders.builder()
                 .productId(product.getId())
@@ -191,29 +198,45 @@ public class OrdersService {
             log.info("토스머니");
             order.tossMoneyOrder(jsonNode);
         }
-        ordersRepository.save(order);
 
-        orderData.remove(orderNo + "product");
-        orderData.remove(orderNo + "account");
-        orderData.remove(orderNo + "address");
-        orderData.remove(orderNo + "quantity");
-        orderData.remove(orderNo + "payToken");
-        orderData.remove(orderNo + "size");
+        redisTemplate.delete("order:payToken:"+orderNo);
+        redisTemplate.delete("order:product:"+orderNo);
+        redisTemplate.delete("order:account:"+orderNo);
+        redisTemplate.delete("order:address:"+orderNo);
+        redisTemplate.delete("order:quantity:"+orderNo);
+        redisTemplate.delete("order:size:"+orderNo);
+
+        try{
+            ordersRepository.save(order);
+        }
+        catch (Exception e){
+            runUrl(refundUrl, orderTransmitDto);
+            throw new IllegalArgumentException("주문 정보 저장에 실패하였습니다.");
+        }
+
+        try {
+            productRepository.save(product);
+        }catch (Exception e) {
+            runUrl(refundUrl, orderTransmitDto);
+            throw new IllegalArgumentException("상품 구매수 및 수량 조정에 실패하였습니다.");
+        }
+
+        log.info("상품 구매수 및 수량 조정 완료 = {}(상품 아이디)", product.getId());
 
         log.info("결제 완료 = {}", order.getId());
     }
 
     public void cancelLogic(String orderNo) throws JsonProcessingException {
-        if (!orderData.containsKey(orderNo + "payToken")) {
+        if (!redisTemplate.hasKey("payToken:"+orderNo)) {
             throw new IllegalArgumentException("결제 정보가 존재하지 않습니다.");
-        };
+        }
 
-        orderData.remove(orderNo + "product");
-        orderData.remove(orderNo + "account");
-        orderData.remove(orderNo + "address");
-        orderData.remove(orderNo + "quantity");
-        orderData.remove(orderNo + "payToken");
-        orderData.remove(orderNo + "size");
+        redisTemplate.delete("order:payToken:"+orderNo);
+        redisTemplate.delete("order:product:"+orderNo);
+        redisTemplate.delete("order:account:"+orderNo);
+        redisTemplate.delete("order:address:"+orderNo);
+        redisTemplate.delete("order:quantity:"+orderNo);
+        redisTemplate.delete("order:size:"+orderNo);
 
         log.info("결제 취소 완료 = {}", orderNo);
     }

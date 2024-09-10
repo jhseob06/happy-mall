@@ -47,7 +47,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String access = jwtUtil.createJwt("access", id, identifier, role, 600000L);
         String refresh = jwtUtil.createJwt("refresh", id, identifier, role, 86400000L);
 
-        redisTemplate.opsForValue().set(refresh, "true", 86400000L, TimeUnit.MILLISECONDS);
+        redisTemplate.opsForValue().set("refresh:"+refresh, "true", 86400000L, TimeUnit.MILLISECONDS);
 
         response.addHeader("access", "Bearer " + access);
         response.addCookie(createCookie("refresh", refresh));

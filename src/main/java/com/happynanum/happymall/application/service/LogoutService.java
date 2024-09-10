@@ -65,13 +65,13 @@ public class LogoutService {
             return;
         }
 
-        boolean isExist = redisTemplate.hasKey(refresh);
+        boolean isExist = redisTemplate.hasKey("refresh:"+refresh);
         if (!isExist) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
-        redisTemplate.delete(refresh);
+        redisTemplate.delete("refresh:"+refresh);
 
         Cookie cookie = new Cookie("refresh", null);
         cookie.setMaxAge(0);

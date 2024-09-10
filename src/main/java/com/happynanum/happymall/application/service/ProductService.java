@@ -93,6 +93,7 @@ public class ProductService {
                 .price(productRequestDto.getPrice())
                 .quantity(productRequestDto.getQuantity())
                 .discount(productRequestDto.getDiscount())
+                .version(product.getVersion())
                 .reviewCount(product.getReviewCount())
                 .purchaseCount(product.getPurchaseCount())
                 .createdDate(product.getCreatedDate())
