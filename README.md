@@ -36,7 +36,7 @@
 
 2. **application.properties를 변경합니다**
  - shoppingmall/src/main/resources/application.properties 열기
- - SQL 서버 변경
+ - 데이터베이스 변경
  - project.domain 변경
  - shoppingmall/src/test/resources/application.properties에도 똑같이 적용
 <br>
@@ -52,6 +52,8 @@
 - Spring Security
 - Spring Data JPA
 - MySQL
+- Redis
+
 - JUnit5
 
 ### 환경
